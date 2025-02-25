@@ -1,10 +1,12 @@
 # SQLite database files
 *.db
+*.db-journal
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+*python-version
 
 # C extensions
 *.so
