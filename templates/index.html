@@ -1,9 +1,33 @@
 <html>
 <head>
     <title>Home</title>
+    <link rel="stylesheet" href="/static/style/bulma.min.css">
+    <link rel="stylesheet" href="/static/style/dataTables.bulma.min.css">
+    <link rel="stylesheet" href="/static/style/font-awesome.min.css">
 </head>
 <body>
     <h1>Welcome to the MDverse data explorer prototype 🔎!</h1>
     <p>Amount of data available:</p>
+    <!-- Display the amount of data available. Query from database to get the needed fields -->
+    <table id="SummaryTable">
+        <thead>
+            <tr>
+                <th>Dataset Origin</th>
+                <th>Number of Datasets</th>
+                <th>First Dataset</th>
+                <th>Last Dataset</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="/static/script/jquery-3.7.1.js"></script>
+    <script src="/static/script/dataTables.js"></script>
+    <script src="/static/script/dataTables.bulma.js"></script>
+
 </body>
 </html>
