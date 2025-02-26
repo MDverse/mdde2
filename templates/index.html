@@ -1,14 +1,23 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
 <html>
 <head>
     <title>Home</title>
+
+    <!-- jQuery (must come before DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables CSS/JS -->
     <link rel="stylesheet" href="/static/style/bulma.min.css">
-    <link rel="stylesheet" href="/static/style/dataTables.bulma.min.css">
+    <link rel="stylesheet" href="/static/style/dataTables.bulma.css">
     <link rel="stylesheet" href="/static/style/font-awesome.min.css">
+    <script src="/static/script/dataTables.js"></script>
+    <script src="/static/script/dataTables.bulma.js"></script>
 </head>
 <body>
     <h1>Welcome to the MDverse data explorer prototype 🔎!</h1>
-    <p>Amount of data available:</p>
-    <!-- Display the amount of data available. Query from database to get the needed fields -->
+    <p>Below is the dataset origin summary:</p>
+
     <table id="SummaryTable">
         <thead>
             <tr>
@@ -19,15 +28,26 @@
             </tr>
         </thead>
         <tbody>
+        {% for row in results %}
             <tr>
-
+                <td>{{ row.dataset_origin }}</td>
+                <td>{{ row.number_of_datasets }}</td>
+                <td>{{ row.first_dataset }}</td>
+                <td>{{ row.last_dataset }}</td>
             </tr>
+        {% endfor %}
         </tbody>
+        <tfoot>
+            <tr>
+              <td>Total</td>
+              <td>{{ total_count }}</td>
+              <td>None</td>
+              <td>None</td>
+            </tr>
+          </tfoot>
     </table>
 
-    <script src="/static/script/jquery-3.7.1.js"></script>
-    <script src="/static/script/dataTables.js"></script>
-    <script src="/static/script/dataTables.bulma.js"></script>
-
+    <!-- Your custom script that initializes DataTables -->
+    <script src="/static/script/script.js"></script>
 </body>
 </html>

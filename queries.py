@@ -22,4 +22,9 @@ def get_dataset_origin_summary():
         )
 
         results = session.exec(statement).all()
-        return results
+
+        total_count = 0
+        for row in results:
+            total_count += row.number_of_datasets
+
+        return results, total_count
