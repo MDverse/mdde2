@@ -2,23 +2,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Home</title>
-
-    <!-- jQuery (must come before DataTables) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- DataTables CSS/JS -->
-    <link rel="stylesheet" href="/static/style/bulma.min.css">
-    <link rel="stylesheet" href="/static/style/dataTables.bulma.css">
-    <link rel="stylesheet" href="/static/style/font-awesome.min.css">
-    <script src="/static/script/dataTables.js"></script>
-    <script src="/static/script/dataTables.bulma.js"></script>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <!-- DataTables CSS+JS -->
+    <!-- https://datatables.net/download/ -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js""></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 </head>
 <body>
     <h1>Welcome to the MDverse data explorer prototype 🔎!</h1>
     <p>Below is the dataset origin summary:</p>
 
-    <table id="SummaryTable">
+    <table id="SummaryTable" class="display" style="width:100%">
         <thead>
             <tr>
                 {% for key, value in total_count.items() %}
@@ -53,6 +53,14 @@
     </table>
 
     <!-- Script that initializes DataTables -->
-    <script src="/static/script/script.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#SummaryTable').DataTable({
+                "paging": false,
+                "searching": false,
+                "info": false,
+            });
+        });
+    </script>
 </body>
 </html>
