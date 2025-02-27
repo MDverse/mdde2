@@ -1,6 +1,10 @@
 # SQLite database files
-.db
+*.db
 *.db-journal
+
+# Database model and engine
+db_models.py
+db_engine.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
