@@ -8,7 +8,7 @@ to manage dependencies and the project environment.
 Clone the GitHub repository:
 
 ```sh
-git clone git@github.com:MDverse/mdde2.git
+git clone https://github.com/MDverse/mdde2.git
 cd mdde2
 ```
 
@@ -18,16 +18,24 @@ Sync dependencies:
 uv sync
 ```
 
+## Get data and models
 
-## Launch web page
+```bash
+wget ...
+wget ...
+wget ...
+```
 
-To launch the web page, run the following command:
+
+## Launch web app
+
+To launch the FastAPI web app, run:
 
 ```sh
 uv run uvicorn main:app --reload
 ```
 
-The web page should be available at the following URL:
+The app should be available at the following URL:
 
 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
