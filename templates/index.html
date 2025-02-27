@@ -21,10 +21,9 @@
     <table id="SummaryTable">
         <thead>
             <tr>
-                <th>Dataset Origin</th>
-                <th>Number of Datasets</th>
-                <th>First Dataset</th>
-                <th>Last Dataset</th>
+                {% for key, value in total_count.items() %}
+                <th>{{ key|e }}</th>
+                {% endfor %}
             </tr>
         </thead>
         <tbody>
@@ -33,21 +32,27 @@
                 <td>{{ row.dataset_origin }}</td>
                 <td>{{ row.number_of_datasets }}</td>
                 <td>{{ row.first_dataset }}</td>
-                <td>{{ row.last_dataset }}</td>
+                <td>{{ row.files }}</td>
+                <td>{{ row.total_size_in_GB }}</td>
+                <td>{{ row.zip_files }}</td>
+                <td>{{ row.files_within_zip_files }}</td>
+                <td>{{ row.total_files }}</td>
             </tr>
         {% endfor %}
         </tbody>
         <tfoot>
+        
             <tr>
               <td>Total</td>
-              <td>{{ total_count }}</td>
-              <td>None</td>
-              <td>None</td>
+              {% for key, value in total_count.items() %}
+              <td>{{ value|e }}</td>
+              {% endfor %}
             </tr>
           </tfoot>
+        
     </table>
 
-    <!-- Your custom script that initializes DataTables -->
+    <!-- Script that initializes DataTables -->
     <script src="/static/script/script.js"></script>
 </body>
 </html>
