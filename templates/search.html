@@ -1,0 +1,35 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Search page</title>
+    
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <!-- DataTables CSS+JS -->
+    <!-- https://datatables.net/download/ -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+</head>
+<body>
+    <h1>Datasets search table </h1>
+
+    <table id="DatasetsSearchTable" class="display" style="width:100%">
+        <thead>
+
+        </thead>
+        <tbody>
+
+        </tbody>
+        
+    </table>
+
+    <!-- Script that initializes DataTables -->
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#DatasetsSearchTable').DataTable();
+        });
+    </script>
+</body>
+</html>
