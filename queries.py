@@ -12,7 +12,7 @@ def get_dataset_origin_summary():
         first_dataset,
         last_dataset,
         files (top-level),
-        total_size_in_GB,
+        total_size_in_GB_non_zip_and_zip_files,
         zip_files (parent files that are zip),
         files_within_zip_files,
         total_files
@@ -32,10 +32,11 @@ def get_dataset_origin_summary():
                        (File.is_from_zip_file == False),
                        (FileType.name != "zip")
                        )
-                   .label("files"),
+                   .label("non_zip_files"),
 
-                # Sum size of all files in GB
-                (func.sum(File.size_in_bytes) / 1e9).label("total_size_in_GB"),
+                # Sum size of files that has is_from_zip_file == False
+                (func.sum(File.size_in_bytes).filter(File.is_from_zip_file == False)/ 1e9
+                ).label("total_size_in_GB_non_zip_and_zip_files"),
 
                 # Count parent zip files (FileType.name == 'zip')
                 func.count(func.distinct(File.file_id))
@@ -54,6 +55,8 @@ def get_dataset_origin_summary():
                 func.count(func.distinct(File.file_id)).label("total_files"),
             )
             .join(Dataset, Dataset.origin_id == DatasetOrigin.origin_id)
+            # We have to do an outerjoin here because there are some datasets with no files
+            # For example some osf datasets have no files
             .outerjoin(File, File.dataset_id == Dataset.dataset_id)
             .outerjoin(FileType, File.file_type_id == FileType.file_type_id)
             .group_by(DatasetOrigin.name)
@@ -65,11 +68,11 @@ def get_dataset_origin_summary():
             "Number of datasets": "{:,}".format(sum(row.number_of_datasets for row in datasets_stats_results)),
             "First dataset": "nan",
             "Last dataset": "nan",
-            "Files": "{:,}".format(sum(row.files for row in datasets_stats_results)),
-            "Total size in GB": "{:,.0f}".format(sum(row.total_size_in_GB for row in datasets_stats_results)),
+            "Non-zip files": "{:,}".format(sum(row.non_zip_files for row in datasets_stats_results)),
             "Zip files": "{:,}".format(sum(row.zip_files for row in datasets_stats_results)),
-            "Files within zip files": "{:,}".format(sum(row.files_within_zip_files for row in datasets_stats_results)),
+            "Files in zip files": "{:,}".format(sum(row.files_within_zip_files for row in datasets_stats_results)),
             "Total files": "{:,}".format(sum(row.total_files for row in datasets_stats_results)),
+            "Total size in GB for non-zip and zip files ": "{:,.0f}".format(sum(row.total_size_in_GB_non_zip_and_zip_files for row in datasets_stats_results)),
         }
         
         return datasets_stats_results, datasets_stats_total_count
