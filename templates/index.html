@@ -11,7 +11,7 @@
     <!-- DataTables CSS+JS -->
     <!-- https://datatables.net/download/ -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js""></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 </head>
 <body>
@@ -21,6 +21,7 @@
     <table id="SummaryTable" class="display" style="width:100%">
         <thead>
             <tr>
+                <th>Dataset origin</th>
                 {% for key, value in total_count.items() %}
                 <th>{{ key|e }}</th>
                 {% endfor %}
@@ -30,13 +31,14 @@
         {% for row in results %}
             <tr>
                 <td>{{ row.dataset_origin }}</td>
-                <td>{{ row.number_of_datasets }}</td>
+                <td>{{ "{:,}".format(row.number_of_datasets) }}</td>
                 <td>{{ row.first_dataset }}</td>
-                <td>{{ row.files }}</td>
-                <td>{{ row.total_size_in_GB }}</td>
-                <td>{{ row.zip_files }}</td>
-                <td>{{ row.files_within_zip_files }}</td>
-                <td>{{ row.total_files }}</td>
+                <td>{{ row.last_dataset }}</td>
+                <td>{{ "{:,}".format(row.files) }}</td>
+                <td>{{ "{:,.0f}".format(row.total_size_in_GB) }}</td>
+                <td>{{ "{:,}".format(row.zip_files) }}</td>
+                <td>{{ "{:,}".format(row.files_within_zip_files) }}</td>
+                <td>{{ "{:,}".format(row.total_files) }}</td>
             </tr>
         {% endfor %}
         </tbody>
@@ -52,14 +54,37 @@
         
     </table>
 
+    <p>Below is the stats on the different file types</p>
+    <table id="FileTypeTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>File type</th>
+                <th>Number of files</th>
+                <th>Number of datasets</th>
+                <th>Total size in GB</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in file_type_stats_summary %}
+            <tr>
+                <td>{{ row.file_type }}</td>
+                <td>{{ "{:,}".format(row.number_of_files) }}</td>
+                <td>{{ "{:,}".format(row.number_of_datasets) }}</td>
+                <td>{{ row.total_size_in_GB }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">
         $(document).ready(function() {
             $('#SummaryTable').DataTable({
-                "paging": false,
-                "searching": false,
-                "info": false,
+            "paging": false,
+            "searching": false,
+            "info": false,
             });
+            $('#FileTypeTable').DataTable();
         });
     </script>
 </body>
