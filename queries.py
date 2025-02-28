@@ -85,13 +85,14 @@ def get_file_type_stats():
         statement = (
             select(
             FileType.name.label("file_type"),
-            func.count(func.distinct(File.file_id)).label("number_of_files"),
+            func.count(File.file_id).label("number_of_files"),
             func.count(func.distinct(Dataset.dataset_id)).label("number_of_datasets"),
             (func.sum(File.size_in_bytes) / 1e9).label("total_size_in_GB"),
             )
             .join(File, File.file_type_id == FileType.file_type_id)
             .outerjoin(Dataset, Dataset.dataset_id == File.dataset_id)
             .group_by(FileType.name)
+            # .order_by(func.count(func.distinct(File.file_id)).desc())
         )
     
         file_type_stats_summary = session.exec(statement).all()
