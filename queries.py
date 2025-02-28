@@ -1,4 +1,5 @@
 from sqlalchemy import func
+
 from sqlmodel import Session, select
 
 from db_engine import engine
@@ -78,11 +79,20 @@ def get_dataset_origin_summary():
         return datasets_stats_results, datasets_stats_total_count
 
 
-# For file type stats, we want to retrieve:
-# - the number of files per file type
-# - the number of datasets per file type
-# - the total size of files per file type
 def get_file_type_stats():
+    """
+    Retrieves statistics for each file type, including:
+    - the number of files per file type,
+    - the number of datasets per file type,
+    - the total size of files per file type in gigabytes.
+
+    Returns:
+    file_type_stats_summary (list): A list of results where each result is a row containing:
+        - file_type (str): The name of the file type.
+        - number_of_files (int): The count of files for this file type.
+        - number_of_datasets (int): The count of datasets containing files of this file type.
+        - total_size_in_GB (float): The total size of files for this file type in gigabytes.
+    """
     with Session(engine) as session:
 
         statement = (
@@ -96,6 +106,9 @@ def get_file_type_stats():
             .outerjoin(Dataset, Dataset.dataset_id == File.dataset_id)
             .group_by(FileType.name)
             # .order_by(func.count(func.distinct(File.file_id)).desc())
+            # order_by could be used to sort the results by the number of files per file type
+            # but it is not necessary for this example because the template will sort the results
+            # in the frontend using the DataTables options
         )
     
         file_type_stats_summary = session.exec(statement).all()
