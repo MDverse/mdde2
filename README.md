@@ -29,14 +29,21 @@ wget ...
 
 ## Launch web app
 
+### Developpment mode
+
 To launch the FastAPI web app, run:
 
-```sh
-uv run uvicorn main:app --reload
+```bash
+uv run fastapi dev main.py
 ```
 
 The app should be available at the following URL:
 
 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
-If not just click on the URL provided by the terminal.
+
+## Production mode
+
+```bash
+uv run uvicorn main:app --reload
+```
