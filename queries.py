@@ -1,9 +1,14 @@
 from sqlalchemy import func
+from sqlalchemy.orm import selectinload
+from pathlib import Path
 
 from sqlmodel import Session, select
 
 from db_engine import engine
-from db_models import Dataset, DatasetOrigin, File, FileType
+from db_models import Dataset, DatasetOrigin, File, FileType, Keyword, DatasetKeywordLink
+
+from wordcloud import WordCloud, STOPWORDS
+import matplotlib.pyplot as plt
 
 def get_dataset_origin_summary():
     """
@@ -114,3 +119,65 @@ def get_file_type_stats():
         file_type_stats_summary = session.exec(statement).all()
 
         return file_type_stats_summary
+
+def get_all_datasets():
+    """
+    Returns a list of all dataset objects, with their related objects loaded.
+    """
+    with Session(engine) as session:
+        statement = select(Dataset).options(
+            # Load the related origin object so that dataset.origin is available.
+            selectinload(Dataset.origin),
+            # Load the many-to-many relationship for authors and keywords
+            selectinload(Dataset.author),
+            selectinload(Dataset.keyword)
+        )
+        results = session.exec(statement).all()
+        return results
+
+
+def get_keywords():
+    with Session(engine) as session:
+        statement = (
+            select(Keyword.entry)
+            .join(DatasetKeywordLink)
+        )
+
+        keywords = session.exec(statement).all()
+    return keywords
+
+
+def generate_keyword_wordcloud():
+    wordcloud_path = Path("static/wordcloud.png")
+    
+    # Check if the file already exists
+    if wordcloud_path.exists():
+        print("Wordcloud already exists, skipping generation.")
+        return
+
+    # Retrieve keywords using the query function
+    keywords = get_keywords()  # e.g. ['molecule', 'simulation', 'protein', ...]
+    
+    # Join all keywords into a single string (space separated)
+    text = " ".join(keywords)
+    
+    # Define custom stopwords to remove unwanted words
+    custom_stopwords = set(STOPWORDS)
+    custom_stopwords.update(["none"])
+
+    # Create the WordCloud object
+    wordcloud = WordCloud(
+        width=1600,
+        height=800,
+        background_color="white",
+        stopwords=custom_stopwords
+    ).generate(text)
+
+    # Create the figure
+    plt.figure(figsize=(10, 5))
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    
+    # Save the wordcloud image
+    plt.savefig(wordcloud_path, dpi=500)
+    print(f"Wordcloud saved as {wordcloud_path}")
