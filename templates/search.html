@@ -1,28 +1,100 @@
+<!-- templates/search.html -->
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Search page</title>
+    <title>Dataset search</title>
     
     <!-- Bulma CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"> -->
+
     <!-- DataTables CSS+JS -->
     <!-- https://datatables.net/download/ -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+
+    <style>
+        .ellipsis {
+            max-width: 200px; /* adjust width as needed */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+      </style>
+      
+
 </head>
 <body>
     <h1>Datasets search table </h1>
 
     <table id="DatasetsSearchTable" class="display" style="width:100%">
         <thead>
-
+            <tr>
+                <th>ID</th>
+                <th>ID in origin</th>
+                <th>Origin</th>
+                <th>Title</th>
+                <th>Authors</th>
+                <th>DOI</th>
+                <th>Date created</th>
+                <th>Date last modified</th>
+                <th>Date last crawled</th>
+                <th>File number</th>
+                <th>Download number</th>
+                <th>View number</th>
+                <th>License</th>
+                <th>URL</th>
+                <th>Description</th>
+                <th>Keywords</th>
+            </tr>
         </thead>
         <tbody>
-
+            {% for dataset in datasets %}
+            <tr>
+                <td>{{ dataset.dataset_id }}</td>
+                <td>{{ dataset.id_in_origin }}</td>
+                <!-- Show the origin's name -->
+                <td>{{ dataset.origin.name if dataset.origin else 'N/A' }}</td>
+                <td class="ellipsis" title="{{ dataset.title }}">
+                    {{ dataset.title }}
+                </td>
+                <!-- For many-to-many relationships like authors, loop and separate by semicolons -->
+                <td>
+                    {% if dataset.author %}
+                        {% for author in dataset.author %}
+                            {{ author.name }}{% if not loop.last %}; {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+                <td>{{ dataset.doi }}</td>
+                <td>{{ dataset.date_created }}</td>
+                <td>{{ dataset.date_last_modified }}</td>
+                <td>{{ dataset.date_last_crawled }}</td>
+                <td>{{ dataset.file_number }}</td>
+                <td>{{ dataset.download_number }}</td>
+                <td>{{ dataset.view_number }}</td>
+                <td>{{ dataset.license }}</td>
+                <td>{{ dataset.url }}</td>
+                <td class="ellipsis" title="{{ dataset.description }}">
+                    {{ dataset.description }}
+                </td>
+                <!-- For many-to-many relationships like keywords, loop and separate by semicolons -->
+                <td>
+                    {% if dataset.keyword %}
+                        {% for keyword in dataset.keyword %}
+                            {{ keyword.entry }}{% if not loop.last %}; {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
-        
     </table>
 
     <!-- Script that initializes DataTables -->
