@@ -42,6 +42,11 @@ The app should be available at the following URL:
 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 
+To access the datasets-information search page, add `/search` to the URL:
+
+[http://127.0.0.1:8000/search](http://127.0.0.1:8000/search)
+
+
 ## Production mode
 
 ```bash
