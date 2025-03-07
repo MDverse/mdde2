@@ -78,12 +78,12 @@
                 <td>{{ dataset.download_number }}</td>
                 <td>{{ dataset.view_number }}</td>
                 <td>{{ dataset.license }}</td>
-                <td>{{ dataset.url }}</td>
+                <td><a href="{{ dataset.url }}" target="_blank">{{ dataset.url }}</a></td>
                 <td class="ellipsis" title="{{ dataset.description }}">
                     {{ dataset.description }}
                 </td>
                 <!-- For many-to-many relationships like keywords, loop and separate by semicolons -->
-                <td>
+                <td class="ellipsis" title="{% if dataset.keyword %}{% for keyword in dataset.keyword %}{{ keyword.entry }}{% if not loop.last %}; {% endif %}{% endfor %}{% else %}N/A{% endif %}">
                     {% if dataset.keyword %}
                         {% for keyword in dataset.keyword %}
                             {{ keyword.entry }}{% if not loop.last %}; {% endif %}
