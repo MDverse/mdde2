@@ -1,6 +1,9 @@
-from sqlalchemy import func
+from sqlalchemy import func, extract
 from sqlalchemy.orm import selectinload
 from pathlib import Path
+from bokeh.plotting import figure, show
+from bokeh.models import ColumnDataSource
+from bokeh.io import save, output_file
 
 from sqlmodel import Session, select
 
@@ -181,3 +184,73 @@ def generate_keyword_wordcloud():
     # Save the wordcloud image
     plt.savefig(wordcloud_path, dpi=500)
     print(f"Wordcloud saved as {wordcloud_path}")
+
+
+def get_yearly_counts_for_origin(session: Session, origin_name: str):
+    """
+    Return a dict mapping year -> count of Datasets for the given origin_name.
+    """
+    stmt = (
+        select(
+            extract('year', Dataset.date_created).label('year'),
+            func.count(Dataset.dataset_id).label('count')
+        )
+        .join(DatasetOrigin, Dataset.origin_id == DatasetOrigin.origin_id)
+        .where(DatasetOrigin.name == origin_name)
+        .group_by('year')
+        .order_by('year')
+    )
+    results = session.exec(stmt).all()
+    # Convert list of tuples to dict {year: count}
+    return {int(row.year): row.count for row in results if row.year is not None}
+
+def create_bokey_plot():
+    with Session(engine) as session:
+        zenodo_data = get_yearly_counts_for_origin(session, "zenodo")
+        osf_data = get_yearly_counts_for_origin(session, "osf")
+        figshare_data = get_yearly_counts_for_origin(session, "figshare")
+
+    all_years = sorted(list(
+        set(zenodo_data.keys()) | set(osf_data.keys()) | set(figshare_data.keys())
+    ))
+
+    data = {
+        'year': [str(y) for y in all_years],
+        'Zenodo': [zenodo_data.get(y, 0) for y in all_years],
+        'OSF': [osf_data.get(y, 0) for y in all_years],
+        'Figshare': [figshare_data.get(y, 0) for y in all_years]
+    }
+
+    source = ColumnDataSource(data=data)
+
+    repositories = ["Zenodo", "OSF", "Figshare"]
+    colors = ["#2055A5", "#E3712B", "#7C1533"]
+
+    p = figure(
+        x_range=data['year'],
+        plot_height=500,
+        plot_width=700,
+        title="Number of files per year per data repository",
+        toolbar_location=None,
+        tools="hover",
+        tooltips="@year: @$name"
+    )
+
+    p.vbar_stack(
+        stackers=repositories,
+        x='year',
+        width=0.8,
+        source=source,
+        color=colors,
+        legend_label=repositories
+    )
+
+    p.xaxis.axis_label = "Year"
+    p.yaxis.axis_label = "Number of files"
+    p.xaxis.major_label_orientation = 0  # 0 means horizontal text
+    p.legend.location = "top_left"
+
+    # Save and/or show
+    output_file("files_by_year.html")
+    save(p)  # saves the plot to files_by_year.html
+    show(p)  # opens the plot in a browser
