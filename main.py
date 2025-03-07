@@ -59,4 +59,7 @@ async def get_dataset_info(
     dataset_id: int
     ):
     dataset = get_dataset_by_id(dataset_id)
-    return templates.TemplateResponse("dataset_info.html", {"request": request, "dataset": dataset})
+    return templates.TemplateResponse(
+        "dataset_info.html",
+        {"request": request, "dataset": dataset}
+    )
