@@ -51,6 +51,7 @@
         </thead>
         <tbody>
             {% for dataset in datasets %}
+            <tr>
                 <!-- Show the origin's name -->
                 <td>{{ dataset.origin.name if dataset.origin else 'N/A' }}</td>
                 <td>{{ dataset.id_in_origin }}</td>
