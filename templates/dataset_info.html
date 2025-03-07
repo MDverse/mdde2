@@ -1,0 +1,68 @@
+<h2>Dataset information</h2>
+
+<p>
+Origin: {{ dataset.origin.name if dataset.origin else 'N/A' }}
+</p>
+
+<p>
+ID in origin: {{ dataset.id_in_origin }}
+</p>
+
+<p>
+Title: {{ dataset.title }}
+</p>
+
+<p>
+Description: {{ dataset.description }}
+</p>
+
+<p>
+Authors:
+{% if dataset.author %}
+    {% for author in dataset.author %}
+        {{ author.name }}{% if not loop.last %}; {% endif %}
+    {% endfor %}
+{% else %}
+    N/A
+{% endif %}
+</p>
+
+
+DOI: <a href="https://doi.org/{{ dataset.doi }}" target="_blank">{{ dataset.doi }}</a>
+</p>
+
+<p>
+Date created: {{ dataset.date_created }}
+|
+Date last modified: {{ dataset.date_last_modified }}
+|
+Date last crwaled: {{ dataset.date_last_crawled }}
+</p>
+
+<p>
+Number of files: {{ dataset.file_number }}
+|
+Number of downloads: {{ dataset.download_number }}
+|
+Number of views: {{ dataset.view_number }}
+</p>
+
+<p>
+Licence: {{ dataset.license }}
+</p>
+
+<p>
+URL: <a href="{{ dataset.url }}" target="_blank">{{ dataset.url }}</a>
+</p>
+
+<p>
+Keywords:
+<!-- For many-to-many relationships like keywords, loop and separate by semicolons -->
+{% if dataset.keyword %}
+    {% for keyword in dataset.keyword %}
+        {{ keyword.entry }}{% if not loop.last %}; {% endif %}
+    {% endfor %}
+{% else %}
+    N/A
+{% endif %}
+</p>

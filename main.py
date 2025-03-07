@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Request
+from typing import Annotated, Union
+
+from fastapi import FastAPI, Request, Header
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 
@@ -7,6 +9,7 @@ from queries import (
     get_file_type_stats,
     get_all_datasets,
     generate_keyword_wordcloud,
+    get_dataset_by_id,
 )
 
 app = FastAPI()
@@ -48,3 +51,12 @@ async def search_page(request: Request):
             "datasets": datasets,
         }
     )
+
+
+@app.get("/dataset/{dataset_id}")
+async def get_dataset_info(
+    request: Request,
+    dataset_id: int
+    ):
+    dataset = get_dataset_by_id(dataset_id)
+    return templates.TemplateResponse("dataset_info.html", {"request": request, "dataset": dataset})

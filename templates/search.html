@@ -8,13 +8,14 @@
     
     <!-- Bulma CSS -->
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"> -->
-
     <!-- DataTables CSS+JS -->
     <!-- https://datatables.net/download/ -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-
+    <!-- HTMX -->
+    <!-- https://htmx.org/ -->
+    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
     <style>
         .ellipsis {
             max-width: 200px; /* adjust width as needed */
@@ -23,8 +24,6 @@
             text-overflow: ellipsis;
         }
       </style>
-      
-
 </head>
 <body>
     <h1>Datasets search table </h1>
@@ -51,7 +50,7 @@
         </thead>
         <tbody>
             {% for dataset in datasets %}
-            <tr>
+            <tr hx-trigger="click" hx-get="/dataset/{{ dataset.dataset_id }}" hx-swap="innerHTML" hx-target="#dataset_details">
                 <!-- Show the origin's name -->
                 <td>{{ dataset.origin.name if dataset.origin else 'N/A' }}</td>
                 <td>{{ dataset.id_in_origin }}</td>
@@ -94,6 +93,10 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <div id="dataset_details">
+
+    </div>
 
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">
