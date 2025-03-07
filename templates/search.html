@@ -35,7 +35,7 @@
                 <th>ID in origin</th>
                 <th>Title</th>
                 <th>Authors</th>
-                <th>DOI</th>
+                <th>URL</th>
                 <th>Date created</th>
                 <th>Date last modified</th>
                 <th>Date last crawled</th>
@@ -66,7 +66,7 @@
                         N/A
                     {% endif %}
                 </td>
-                <td><a href="https://doi.org/{{ dataset.doi }}" target="_blank">{{ dataset.doi }}</a></td>
+                <td><a href="{{ dataset.url }}" target="_blank">🌐</a></td>
                 <td>{{ dataset.date_created }}</td>
                 <td>{{ dataset.date_last_modified }}</td>
                 <td>{{ dataset.date_last_crawled }}</td>
