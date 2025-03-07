@@ -32,9 +32,8 @@
     <table id="DatasetsSearchTable" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>ID in origin</th>
                 <th>Origin</th>
+                <th>ID in origin</th>
                 <th>Title</th>
                 <th>Authors</th>
                 <th>DOI</th>
@@ -52,11 +51,9 @@
         </thead>
         <tbody>
             {% for dataset in datasets %}
-            <tr>
-                <td>{{ dataset.dataset_id }}</td>
-                <td>{{ dataset.id_in_origin }}</td>
                 <!-- Show the origin's name -->
                 <td>{{ dataset.origin.name if dataset.origin else 'N/A' }}</td>
+                <td>{{ dataset.id_in_origin }}</td>
                 <td class="ellipsis" title="{{ dataset.title }}">
                     {{ dataset.title }}
                 </td>
