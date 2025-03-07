@@ -5,6 +5,7 @@
 # Database model and engine
 db_models.py
 db_engine.py
+db_schema.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

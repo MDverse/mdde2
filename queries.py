@@ -4,8 +4,8 @@ from pathlib import Path
 
 from sqlmodel import Session, select
 
-from db_engine import engine
-from db_models import Dataset, DatasetOrigin, File, FileType, Keyword, DatasetKeywordLink
+from db_schema import engine
+from db_schema import Dataset, DatasetOrigin, File, FileType, Keyword, DatasetKeywordLink
 
 from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
