@@ -202,6 +202,7 @@ def get_yearly_counts_for_origin(session: Session, origin_name: str):
     )
     results = session.exec(stmt).all()
     # Convert list of tuples to dict {year: count}
+    print(results)
     return {int(row.year): row.count for row in results if row.year is not None}
 
 def create_bokey_plot():
@@ -228,8 +229,8 @@ def create_bokey_plot():
 
     p = figure(
         x_range=data['year'],
-        plot_height=500,
-        plot_width=700,
+        height=500,
+        width=700,
         title="Number of files per year per data repository",
         toolbar_location=None,
         tools="hover",
@@ -254,3 +255,5 @@ def create_bokey_plot():
     output_file("files_by_year.html")
     save(p)  # saves the plot to files_by_year.html
     show(p)  # opens the plot in a browser
+
+create_bokey_plot()
