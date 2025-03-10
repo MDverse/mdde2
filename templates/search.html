@@ -8,13 +8,14 @@
     
     <!-- Bulma CSS -->
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"> -->
-
     <!-- DataTables CSS+JS -->
     <!-- https://datatables.net/download/ -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-
+    <!-- HTMX -->
+    <!-- https://htmx.org/ -->
+    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
     <style>
         .ellipsis {
             max-width: 200px; /* adjust width as needed */
@@ -23,8 +24,6 @@
             text-overflow: ellipsis;
         }
       </style>
-      
-
 </head>
 <body>
     <h1>Datasets search table </h1>
@@ -32,12 +31,11 @@
     <table id="DatasetsSearchTable" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>ID in origin</th>
                 <th>Origin</th>
+                <th>ID in origin</th>
                 <th>Title</th>
                 <th>Authors</th>
-                <th>DOI</th>
+                <th>URL</th>
                 <th>Date created</th>
                 <th>Date last modified</th>
                 <th>Date last crawled</th>
@@ -45,18 +43,16 @@
                 <th>Download number</th>
                 <th>View number</th>
                 <th>License</th>
-                <th>URL</th>
                 <th>Description</th>
                 <th>Keywords</th>
             </tr>
         </thead>
         <tbody>
             {% for dataset in datasets %}
-            <tr>
-                <td>{{ dataset.dataset_id }}</td>
-                <td>{{ dataset.id_in_origin }}</td>
+            <tr hx-trigger="click" hx-get="/dataset/{{ dataset.dataset_id }}" hx-swap="innerHTML" hx-target="#dataset_details">
                 <!-- Show the origin's name -->
                 <td>{{ dataset.origin.name if dataset.origin else 'N/A' }}</td>
+                <td>{{ dataset.id_in_origin }}</td>
                 <td class="ellipsis" title="{{ dataset.title }}">
                     {{ dataset.title }}
                 </td>
@@ -70,7 +66,7 @@
                         N/A
                     {% endif %}
                 </td>
-                <td>{{ dataset.doi }}</td>
+                <td><a href="{{ dataset.url }}" target="_blank">🌐</a></td>
                 <td>{{ dataset.date_created }}</td>
                 <td>{{ dataset.date_last_modified }}</td>
                 <td>{{ dataset.date_last_crawled }}</td>
@@ -78,7 +74,6 @@
                 <td>{{ dataset.download_number }}</td>
                 <td>{{ dataset.view_number }}</td>
                 <td>{{ dataset.license }}</td>
-                <td><a href="{{ dataset.url }}" target="_blank">{{ dataset.url }}</a></td>
                 <td class="ellipsis" title="{{ dataset.description }}">
                     {{ dataset.description }}
                 </td>
@@ -96,6 +91,10 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <div id="dataset_details">
+
+    </div>
 
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">
