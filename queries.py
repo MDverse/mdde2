@@ -254,3 +254,23 @@ def create_bokey_plot():
     output_file("files_by_year.html")
     save(p)  # saves the plot to files_by_year.html
     show(p)  # opens the plot in a browser
+
+
+def get_dataset_by_id(dataset_id: int):
+    """
+    Returns dataset from its id.
+    """
+    with Session(engine) as session:
+        statement = (
+            select(Dataset)
+            .options(
+                # Load the related origin object so that dataset.origin is available.
+                selectinload(Dataset.origin),
+                # Load the many-to-many relationship for authors and keywords
+                selectinload(Dataset.author),
+                selectinload(Dataset.keyword)
+            )
+            .where(Dataset.dataset_id == dataset_id)
+        )
+        result = session.exec(statement).first()
+        return result
