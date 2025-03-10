@@ -22,8 +22,21 @@ dependencies = [
     "wordcloud>=1.9.4",
 ]
 
+[tool.ruff.lint]
+# Ruff rules: https://docs.astral.sh/ruff/rules/
+select = [
+    "F",    # pyflakes
+    "E",    # pycodestyle Error
+    "W",    # pycodestle Warning
+    "I",    # isort
+    "B",    # bugbear
+    "C90",  # mccabe
+    "N",    # pep8-naming
+]
+
 [dependency-groups]
 dev = [
     "fastapi[standard]>=0.115.8",
     "pytest>=8.3.5",
+    "ruff>=0.9.10",
 ]
