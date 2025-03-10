@@ -274,7 +274,6 @@ def create_files_plot():
     )
     p.xaxis.axis_label = "Year"
     p.yaxis.axis_label = "Number of files"
-    p.xaxis.major_label_orientation = 0
 
     p.title.text_font_size = "14pt"
     p.xaxis.axis_label_text_font_size = "12pt"
@@ -315,7 +314,7 @@ def create_datasets_plot():
     all_years = sorted(
         set(zenodo_data.keys()) | set(osf_data.keys()) | set(figshare_data.keys())
     )
-
+    
     data = {
         'year': [str(y) for y in all_years],
         'Zenodo': [zenodo_data.get(y, 0) for y in all_years],
@@ -350,7 +349,6 @@ def create_datasets_plot():
     )
     p.xaxis.axis_label = "Year"
     p.yaxis.axis_label = "Number of datasets"
-    p.xaxis.major_label_orientation = 0
 
     p.title.text_font_size = "14pt"
     p.xaxis.axis_label_text_font_size = "12pt"

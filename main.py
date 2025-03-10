@@ -23,10 +23,10 @@ async def read_index(request: Request):
     # Generate the wordcloud image.
     generate_keyword_wordcloud()
 
-
     # Get the data from query
     datasets_stats_results, datasets_stats_total_count = get_dataset_origin_summary()
     file_type_stats_summary = get_file_type_stats()
+
 
     # Create both Bokeh plots.
     files_plot = create_files_plot()
