@@ -38,7 +38,6 @@
                 <th>URL</th>
                 <th>Date created</th>
                 <th>Date last modified</th>
-                <th>Date last crawled</th>
                 <th>File number</th>
                 <th>Download number</th>
                 <th>View number</th>
@@ -57,7 +56,7 @@
                     {{ dataset.title }}
                 </td>
                 <!-- For many-to-many relationships like authors, loop and separate by semicolons -->
-                <td>
+                <td class="ellipsis" title="{% if dataset.author %}{% for author in dataset.author %}{{ author.name }}{% if not loop.last %}; {% endif %}{% endfor %}{% else %}N/A{% endif %}">
                     {% if dataset.author %}
                         {% for author in dataset.author %}
                             {{ author.name }}{% if not loop.last %}; {% endif %}
@@ -69,7 +68,6 @@
                 <td><a href="{{ dataset.url }}" target="_blank">🌐</a></td>
                 <td>{{ dataset.date_created }}</td>
                 <td>{{ dataset.date_last_modified }}</td>
-                <td>{{ dataset.date_last_crawled }}</td>
                 <td>{{ dataset.file_number }}</td>
                 <td>{{ dataset.download_number }}</td>
                 <td>{{ dataset.view_number }}</td>

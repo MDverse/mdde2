@@ -14,6 +14,34 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+
+
+    <!-- Bokeh CSS -->
+    <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
+    <!-- Bokeh JS -->
+    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
+
+    <!-- Custom styles for buttons -->
+    <style>
+        .toggle-btn {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .toggle-btn.active {
+            background-color: #66c2a5;
+            color: white;
+        }
+        .toggle-btn:hover {
+            background-color: #fc8d62;
+            color: white;
+        }
+        .plot-section {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Welcome to the MDverse data explorer prototype 🔎!</h1>
@@ -82,6 +110,48 @@
         <h2>Keyword wordcloud</h2>
         <img src="/static/wordcloud.png" alt="Keyword Wordcloud" style="max-width:100%; height:auto;">
     </div>
+
+
+    <!-- Toggle buttons for plots -->
+    <div style="text-align: center; margin-top: 20px;">
+        <button id="filesBtn" class="toggle-btn active">Number of files per year</button>
+        <button id="datasetsBtn" class="toggle-btn">Number of datasets per year</button>
+    </div>
+    
+    <!-- Plot container using Flexbox to center child elements -->
+    <div class="plot-section" style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+        <!-- By default, show the files plot -->
+        <div id="filesPlot" style="width: 800px;">
+            {{ files_plot_div | safe }}
+        </div>
+        <!-- The datasets plot is hidden by default -->
+        <div id="datasetsPlot" style="width: 800px; display: none;">
+            {{ datasets_plot_div | safe }}
+        </div>
+    </div>
+
+    
+    <!-- Bokeh scripts (both plots' scripts) -->
+    {{ files_plot_script | safe }}
+    {{ datasets_plot_script | safe }}
+
+    <!-- JavaScript to toggle the plots -->
+    <script>
+        $(document).ready(function() {
+            $("#filesBtn").click(function(){
+                $(this).addClass("active");
+                $("#datasetsBtn").removeClass("active");
+                $("#filesPlot").show();
+                $("#datasetsPlot").hide();
+            });
+            $("#datasetsBtn").click(function(){
+                $(this).addClass("active");
+                $("#filesBtn").removeClass("active");
+                $("#datasetsPlot").show();
+                $("#filesPlot").hide();
+            });
+        });
+    </script>
 
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">

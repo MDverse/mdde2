@@ -1,8 +1,8 @@
 from sqlalchemy import func, extract
 from sqlalchemy.orm import selectinload
 from pathlib import Path
-from bokeh.plotting import figure, show
-from bokeh.models import ColumnDataSource
+from bokeh.plotting import figure, show, curdoc
+from bokeh.models import ColumnDataSource, HoverTool
 from bokeh.io import save, output_file
 
 from sqlmodel import Session, select
@@ -186,10 +186,84 @@ def generate_keyword_wordcloud():
     print(f"Wordcloud saved as {wordcloud_path}")
 
 
-def get_yearly_counts_for_origin(session: Session, origin_name: str):
-    """
-    Return a dict mapping year -> count of Datasets for the given origin_name.
-    """
+
+
+def get_files_yearly_counts_for_origin(session: Session, origin_name: str):
+    stmt = (
+        select(
+            extract('year', Dataset.date_created).label('year'),
+            func.count(Dataset.dataset_id).label('count')
+        )
+        .join(File, File.dataset_id == Dataset.dataset_id)
+        .join(DatasetOrigin, Dataset.origin_id == DatasetOrigin.origin_id)
+        .where(DatasetOrigin.name == origin_name)
+        .group_by('year')
+        .order_by('year')
+    )
+    results = session.exec(stmt).all()
+    return {int(row.year): row.count for row in results if row.year is not None}
+
+def create_files_plot():
+    with Session(engine) as session:
+        zenodo_data = get_files_yearly_counts_for_origin(session, "zenodo")
+        osf_data = get_files_yearly_counts_for_origin(session, "osf")
+        figshare_data = get_files_yearly_counts_for_origin(session, "figshare")
+
+    all_years = sorted(
+        set(zenodo_data.keys()) | set(osf_data.keys()) | set(figshare_data.keys())
+    )
+
+    data = {
+        'year': [str(y) for y in all_years],
+        'Zenodo': [zenodo_data.get(y, 0) for y in all_years],
+        'OSF': [osf_data.get(y, 0) for y in all_years],
+        'Figshare': [figshare_data.get(y, 0) for y in all_years]
+    }
+
+    source = ColumnDataSource(data=data)
+    repositories = ["Zenodo", "OSF", "Figshare"]
+    colors = ['#66c2a5', '#fc8d62', '#8da0cb']
+
+    p = figure(
+        x_range=data['year'],
+        height=500,
+        width=800,
+        title="Number of files per year per data repository",
+        tooltips=[
+            ("Year", "@year"),
+            ("Repository", "$name"),
+            ("Files", "@$name")
+        ],
+        background_fill_color="#fafafa",
+    )
+
+    p.vbar_stack(
+        stackers=repositories,
+        x='year',
+        width=0.8,
+        source=source,
+        color=colors,
+        legend_label=repositories
+    )
+    p.xaxis.axis_label = "Year"
+    p.yaxis.axis_label = "Number of files"
+    p.xaxis.major_label_orientation = 0
+
+    p.title.text_font_size = "14pt"
+    p.xaxis.axis_label_text_font_size = "12pt"
+    p.yaxis.axis_label_text_font_size = "12pt"
+    p.xaxis.major_label_text_font_size = "10pt"
+    p.yaxis.major_label_text_font_size = "10pt"
+
+    p.legend.location = "top_left"
+    p.legend.background_fill_alpha = 0.3
+    p.legend.border_line_color = None
+    p.legend.label_text_font_size = "10pt"
+
+    return p
+
+# Similarly, create a plot for datasets per year.
+def get_dataset_yearly_counts_for_origin(session: Session, origin_name: str):
     stmt = (
         select(
             extract('year', Dataset.date_created).label('year'),
@@ -201,19 +275,17 @@ def get_yearly_counts_for_origin(session: Session, origin_name: str):
         .order_by('year')
     )
     results = session.exec(stmt).all()
-    # Convert list of tuples to dict {year: count}
-    print(results)
     return {int(row.year): row.count for row in results if row.year is not None}
 
-def create_bokey_plot():
+def create_datasets_plot():
     with Session(engine) as session:
-        zenodo_data = get_yearly_counts_for_origin(session, "zenodo")
-        osf_data = get_yearly_counts_for_origin(session, "osf")
-        figshare_data = get_yearly_counts_for_origin(session, "figshare")
+        zenodo_data = get_dataset_yearly_counts_for_origin(session, "zenodo")
+        osf_data = get_dataset_yearly_counts_for_origin(session, "osf")
+        figshare_data = get_dataset_yearly_counts_for_origin(session, "figshare")
 
-    all_years = sorted(list(
+    all_years = sorted(
         set(zenodo_data.keys()) | set(osf_data.keys()) | set(figshare_data.keys())
-    ))
+    )
 
     data = {
         'year': [str(y) for y in all_years],
@@ -223,18 +295,20 @@ def create_bokey_plot():
     }
 
     source = ColumnDataSource(data=data)
-
     repositories = ["Zenodo", "OSF", "Figshare"]
-    colors = ["#2055A5", "#E3712B", "#7C1533"]
+    colors = ['#66c2a5', '#fc8d62', '#8da0cb']
 
     p = figure(
         x_range=data['year'],
         height=500,
-        width=700,
-        title="Number of files per year per data repository",
-        toolbar_location=None,
-        tools="hover",
-        tooltips="@year: @$name"
+        width=800,
+        title="Number of datasets per year per data repository",
+        tooltips=[
+            ("Year", "@year"),
+            ("Repository", "$name"),
+            ("Datasets", "@$name")
+        ],
+        background_fill_color="#fafafa",
     )
 
     p.vbar_stack(
@@ -245,16 +319,25 @@ def create_bokey_plot():
         color=colors,
         legend_label=repositories
     )
-
     p.xaxis.axis_label = "Year"
-    p.yaxis.axis_label = "Number of files"
-    p.xaxis.major_label_orientation = 0  # 0 means horizontal text
-    p.legend.location = "top_left"
+    p.yaxis.axis_label = "Number of datasets"
+    p.xaxis.major_label_orientation = 0
 
-    # Save and/or show
-    output_file("files_by_year.html")
-    save(p)  # saves the plot to files_by_year.html
-    show(p)  # opens the plot in a browser
+    p.title.text_font_size = "14pt"
+    p.xaxis.axis_label_text_font_size = "12pt"
+    p.yaxis.axis_label_text_font_size = "12pt"
+    p.xaxis.major_label_text_font_size = "10pt"
+    p.yaxis.major_label_text_font_size = "10pt"
+
+    p.legend.location = "top_left"
+    p.legend.background_fill_alpha = 0.3
+    p.legend.border_line_color = None
+    p.legend.label_text_font_size = "10pt"
+
+    return p
+
+
+
 
 def get_dataset_by_id(dataset_id: int):
     """
