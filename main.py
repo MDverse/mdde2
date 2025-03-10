@@ -1,17 +1,16 @@
-from fastapi import FastAPI, Request
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-
 from bokeh.embed import components
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 from queries import (
+    create_datasets_plot,
+    create_files_plot,
+    generate_keyword_wordcloud,
+    get_all_datasets,
+    get_dataset_by_id,
     get_dataset_origin_summary,
     get_file_type_stats,
-    get_all_datasets,
-    generate_keyword_wordcloud,
-    get_dataset_by_id,
-    create_files_plot,
-    create_datasets_plot,
 )
 
 app = FastAPI()
