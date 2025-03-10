@@ -1,17 +1,23 @@
-from sqlalchemy import func, extract
-from sqlalchemy.orm import selectinload
 from pathlib import Path
-from bokeh.plotting import figure, show, curdoc
-from bokeh.models import ColumnDataSource, HoverTool
-from bokeh.io import save, output_file
 
-from sqlmodel import Session, select
-
-from db_schema import engine
-from db_schema import Dataset, DatasetOrigin, File, FileType, Keyword, DatasetKeywordLink
-
-from wordcloud import WordCloud, STOPWORDS
 import matplotlib.pyplot as plt
+from bokeh.models import ColumnDataSource
+from bokeh.plotting import figure
+from sqlalchemy import extract, func
+from sqlalchemy.orm import selectinload
+from sqlmodel import Session, select
+from wordcloud import STOPWORDS, WordCloud
+
+from db_schema import (
+    Dataset,
+    DatasetKeywordLink,
+    DatasetOrigin,
+    File,
+    FileType,
+    Keyword,
+    engine,
+)
+
 
 def get_dataset_origin_summary():
     """
@@ -44,7 +50,9 @@ def get_dataset_origin_summary():
                    .label("non_zip_files"),
 
                 # Sum size of files that has is_from_zip_file == False
-                (func.sum(File.size_in_bytes).filter(File.is_from_zip_file == False)/ 1e9
+                (
+                    func.sum(File.size_in_bytes == True)
+                    .filter(File.is_from_zip_file == False)/ 1e9
                 ).label("total_size_in_GB_non_zip_and_zip_files"),
 
                 # Count parent zip files (FileType.name == 'zip')
@@ -57,14 +65,15 @@ def get_dataset_origin_summary():
 
                 # Count files that are inside zip files
                 func.count(func.distinct(File.file_id))
-                   .filter(File.is_from_zip_file == True)
+                   .filter(File.is_from_zip_file)
                    .label("files_within_zip_files"),
 
                 # Total files (outside-non-zip_parent + parent zips + inside zips)
                 func.count(func.distinct(File.file_id)).label("total_files"),
             )
             .join(Dataset, Dataset.origin_id == DatasetOrigin.origin_id)
-            # We have to do an outerjoin here because there are some datasets with no files
+            # We have to do an outerjoin here because
+            # there are some datasets with no files
             # For example some osf datasets have no files
             .outerjoin(File, File.dataset_id == Dataset.dataset_id)
             .outerjoin(FileType, File.file_type_id == FileType.file_type_id)
@@ -74,16 +83,29 @@ def get_dataset_origin_summary():
         datasets_stats_results = session.exec(statement).all()
 
         datasets_stats_total_count = {
-            "Number of datasets": "{:,}".format(sum(row.number_of_datasets for row in datasets_stats_results)),
+            "Number of datasets": "{:,}".format(sum(
+                row.number_of_datasets for row in datasets_stats_results
+                )),
             "First dataset": "nan",
             "Last dataset": "nan",
-            "Non-zip files": "{:,}".format(sum(row.non_zip_files for row in datasets_stats_results)),
-            "Zip files": "{:,}".format(sum(row.zip_files for row in datasets_stats_results)),
-            "Files in zip files": "{:,}".format(sum(row.files_within_zip_files for row in datasets_stats_results)),
-            "Total files": "{:,}".format(sum(row.total_files for row in datasets_stats_results)),
-            "Total size in GB for non-zip and zip files ": "{:,.0f}".format(sum(row.total_size_in_GB_non_zip_and_zip_files for row in datasets_stats_results)),
+            "Non-zip files": "{:,}".format(sum(
+                row.non_zip_files for row in datasets_stats_results
+                )),
+            "Zip files": "{:,}".format(sum(
+                row.zip_files for row in datasets_stats_results
+                )),
+            "Files in zip files": "{:,}".format(sum(
+                row.files_within_zip_files for row in datasets_stats_results
+                )),
+            "Total files": "{:,}".format(sum(
+                row.total_files for row in datasets_stats_results
+                )),
+            "Total size in GB for non-zip and zip files ": "{:,.0f}".format(sum(
+                row.total_size_in_GB_non_zip_and_zip_files
+                for row in datasets_stats_results
+                )),
         }
-        
+
         return datasets_stats_results, datasets_stats_total_count
 
 
@@ -95,11 +117,14 @@ def get_file_type_stats():
     - the total size of files per file type in gigabytes.
 
     Returns:
-    file_type_stats_summary (list): A list of results where each result is a row containing:
+    file_type_stats_summary (list): A list of results where
+    each result is a row containing:
         - file_type (str): The name of the file type.
         - number_of_files (int): The count of files for this file type.
-        - number_of_datasets (int): The count of datasets containing files of this file type.
-        - total_size_in_GB (float): The total size of files for this file type in gigabytes.
+        - number_of_datasets (int): The count of datasets containing
+                                    files of this file type.
+        - total_size_in_GB (float): The total size of files for this
+                                    file type in gigabytes.
     """
     with Session(engine) as session:
 
@@ -114,14 +139,17 @@ def get_file_type_stats():
             .outerjoin(Dataset, Dataset.dataset_id == File.dataset_id)
             .group_by(FileType.name)
             # .order_by(func.count(func.distinct(File.file_id)).desc())
-            # order_by could be used to sort the results by the number of files per file type
-            # but it is not necessary for this example because the template will sort the results
+            # order_by could be used to sort the results
+            # by the number of files per file type
+            # but it is not necessary for this example
+            # because the template will sort the results
             # in the frontend using the DataTables options
         )
-    
+
         file_type_stats_summary = session.exec(statement).all()
 
         return file_type_stats_summary
+
 
 def get_all_datasets():
     """
@@ -152,7 +180,7 @@ def get_keywords():
 
 def generate_keyword_wordcloud():
     wordcloud_path = Path("static/wordcloud.png")
-    
+
     # Check if the file already exists
     if wordcloud_path.exists():
         print("Wordcloud already exists, skipping generation.")
@@ -160,10 +188,10 @@ def generate_keyword_wordcloud():
 
     # Retrieve keywords using the query function
     keywords = get_keywords()  # e.g. ['molecule', 'simulation', 'protein', ...]
-    
+
     # Join all keywords into a single string (space separated)
     text = " ".join(keywords)
-    
+
     # Define custom stopwords to remove unwanted words
     custom_stopwords = set(STOPWORDS)
     custom_stopwords.update(["none"])
@@ -180,12 +208,10 @@ def generate_keyword_wordcloud():
     plt.figure(figsize=(10, 5))
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    
+
     # Save the wordcloud image
     plt.savefig(wordcloud_path, dpi=500)
     print(f"Wordcloud saved as {wordcloud_path}")
-
-
 
 
 def get_files_yearly_counts_for_origin(session: Session, origin_name: str):
@@ -202,6 +228,7 @@ def get_files_yearly_counts_for_origin(session: Session, origin_name: str):
     )
     results = session.exec(stmt).all()
     return {int(row.year): row.count for row in results if row.year is not None}
+
 
 def create_files_plot():
     with Session(engine) as session:
@@ -262,6 +289,7 @@ def create_files_plot():
 
     return p
 
+
 # Similarly, create a plot for datasets per year.
 def get_dataset_yearly_counts_for_origin(session: Session, origin_name: str):
     stmt = (
@@ -276,6 +304,7 @@ def get_dataset_yearly_counts_for_origin(session: Session, origin_name: str):
     )
     results = session.exec(stmt).all()
     return {int(row.year): row.count for row in results if row.year is not None}
+
 
 def create_datasets_plot():
     with Session(engine) as session:
@@ -335,8 +364,6 @@ def create_datasets_plot():
     p.legend.label_text_font_size = "10pt"
 
     return p
-
-
 
 
 def get_dataset_by_id(dataset_id: int):
