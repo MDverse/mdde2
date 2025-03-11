@@ -24,8 +24,41 @@
             text-overflow: ellipsis;
         }
       </style>
+
+    <!-- Navigation header CSS -->
+    <style>
+        header {
+          background-color: #fc8d62;
+          padding: 8px;
+        }
+        nav {
+          display: flex;
+          justify-content: flex-start;
+          gap: 20px;
+        }
+        nav a {
+          color: white;
+          text-decoration: none;
+          font-size: 18px;
+          font-weight: bold;
+          padding: 10px 20px;
+          border-radius: 4px;
+          transition: background 0.3s ease;
+        }
+        nav a:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+      </style>
 </head>
 <body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="/search">Search</a>
+        </nav>
+    </header>
+
+
     <h1>Datasets search table </h1>
 
     <table id="DatasetsSearchTable" class="display" style="width:100%">
@@ -41,7 +74,6 @@
                 <th>File number</th>
                 <th>Download number</th>
                 <th>View number</th>
-                <th>License</th>
                 <th>Description</th>
                 <th>Keywords</th>
             </tr>
@@ -65,13 +97,12 @@
                         N/A
                     {% endif %}
                 </td>
-                <td><a href="{{ dataset.url }}" target="_blank">🌐</a></td>
+                <td><a href="{{ dataset.url }}" target="_blank" style="text-decoration:none;">🌐</a></td>
                 <td>{{ dataset.date_created }}</td>
                 <td>{{ dataset.date_last_modified }}</td>
                 <td>{{ dataset.file_number }}</td>
                 <td>{{ dataset.download_number }}</td>
                 <td>{{ dataset.view_number }}</td>
-                <td>{{ dataset.license }}</td>
                 <td class="ellipsis" title="{{ dataset.description }}">
                     {{ dataset.description }}
                 </td>
@@ -97,7 +128,24 @@
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">
         $(document).ready(function() {
-            $('#DatasetsSearchTable').DataTable();
+            $('#DatasetsSearchTable').DataTable({
+                // fixedHeader: true,
+                // autoWidth: true,
+                columnDefs: [
+                { width: '6%', targets: 0 },    // Origin
+                { width: '6%', targets: 1 },    // ID in origin
+                { width: '20%', targets: 2 },   // Title
+                { width: '7%', targets: 3 },   // Authors
+                { width: '3%', targets: 4 },    // URL
+                { width: '6%', targets: 5 },   // Date created
+                { width: '6%', targets: 6 },   // Date last modified
+                { width: '3%', targets: 7 },    // File number
+                { width: '3%', targets: 8 },    // Download number
+                { width: '3%', targets: 9 },    // View number
+                { width: '20%', targets: 10 },  // Description
+                { width: '15%', targets: 11 },  // Keywords
+            ]
+            });
         });
     </script>
 </body>

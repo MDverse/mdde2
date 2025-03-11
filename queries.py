@@ -258,8 +258,8 @@ def create_files_plot():
         title="Number of files per year per data repository",
         tooltips=[
             ("Year", "@year"),
-            ("Repository", "$name"),
-            ("Files", "@$name")
+            ("Data repository", "$name"),
+            ("Number of files", "@$name{0,0}")
         ],
         background_fill_color="#fafafa",
     )
@@ -314,7 +314,7 @@ def create_datasets_plot():
     all_years = sorted(
         set(zenodo_data.keys()) | set(osf_data.keys()) | set(figshare_data.keys())
     )
-    
+
     data = {
         'year': [str(y) for y in all_years],
         'Zenodo': [zenodo_data.get(y, 0) for y in all_years],
@@ -333,8 +333,8 @@ def create_datasets_plot():
         title="Number of datasets per year per data repository",
         tooltips=[
             ("Year", "@year"),
-            ("Repository", "$name"),
-            ("Datasets", "@$name")
+            ("Data repository", "$name"),
+            ("Number of datasets", "@$name{0,0}")
         ],
         background_fill_color="#fafafa",
     )

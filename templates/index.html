@@ -42,8 +42,40 @@
             margin-top: 20px;
         }
     </style>
+
+    <!-- Navigation header CSS -->
+    <style>
+        header {
+          background-color: #fc8d62;
+          padding: 8px;
+        }
+        nav {
+          display: flex;
+          justify-content: flex-start;
+          gap: 20px;
+        }
+        nav a {
+          color: white;
+          text-decoration: none;
+          font-size: 18px;
+          font-weight: bold;
+          padding: 10px 20px;
+          border-radius: 4px;
+          transition: background 0.3s ease;
+        }
+        nav a:hover {
+          background-color: rgba(255, 255, 255, 0.2);
+        }
+      </style>
 </head>
 <body>
+      <header>
+        <nav>
+          <a href="/">Home</a>
+          <a href="/search">Search</a>
+        </nav>
+      </header>
+
     <h1>Welcome to the MDverse data explorer prototype 🔎!</h1>
     <p>Below is the dataset origin summary:</p>
 
@@ -108,7 +140,9 @@
     <!-- Display the wordcloud image -->
     <div>
         <h2>Keyword wordcloud</h2>
-        <img src="/static/wordcloud.png" alt="Keyword Wordcloud" style="max-width:100%; height:auto;">
+        <div style="text-align: center;">
+            <img src="/static/wordcloud.png" alt="Keyword Wordcloud" style="max-width:50%; height:auto;">
+        </div>
     </div>
 
 
