@@ -1,91 +1,63 @@
-<!-- templates/index.html -->
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
+{% block head_extra %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Home</title>
-    
-    <!-- Bulma CSS -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"> -->
-    
-    <!-- DataTables CSS + JS -->
-    <!-- https://datatables.net/download/ -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+<!-- Bokeh CSS + JS -->
+<link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
+<script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
 
-    <!-- Bokeh CSS + JS -->
-    <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
-    <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
+<!-- Buttons for bokeh graphs -->
+<style>
+    .toggle-btn {
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+        margin-right: 10px;
+        font-size: 14px;
+    }
+    .toggle-btn.active {
+        background-color: #66c2a5;
+        color: white;
+    }
+    .toggle-btn:hover {
+        background-color: #fc8d62;
+        color: white;
+    }
+    .plot-section {
+        margin-top: 20px;
+    }
+</style>
 
-    <!-- Buttons for bokeh graphs -->
-    <style>
-        .toggle-btn {
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            margin-right: 10px;
-            font-size: 14px;
-        }
-        .toggle-btn.active {
-            background-color: #66c2a5;
-            color: white;
-        }
-        .toggle-btn:hover {
-            background-color: #fc8d62;
-            color: white;
-        }
-        .plot-section {
-            margin-top: 20px;
-        }
-    </style>
+<!-- Navigation header CSS -->
+<style>
+    header {
+      background-color: #fc8d62;
+      padding: 5px;
+    }
+    nav {
+      display: flex;
+      justify-content: flex-start;
+      gap: 20px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 4px;
+      transition: background 0.3s ease;
+    }
+    nav a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+</style>
+{% endblock %}
 
-    <!-- Navigation header CSS -->
-    <style>
-        header {
-          background-color: #fc8d62;
-          padding: 5px;
-        }
-        nav {
-          display: flex;
-          justify-content: flex-start;
-          gap: 20px;
-        }
-        nav a {
-          color: white;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: bold;
-          padding: 10px 20px;
-          border-radius: 4px;
-          transition: background 0.3s ease;
-        }
-        nav a:hover {
-          background-color: rgba(255, 255, 255, 0.2);
-        }
-      </style>
-
-</head>
-
-
-<body>
-
-      <header>
-        <nav>
-          <a href="/">Home</a>
-          <a href="/search">Search</a>
-        </nav>
-      </header>
-
-
-    <h1>Welcome to the MDverse data explorer prototype 🔎!</h1>
-
+{% block main %}
+    <h1>Welcome to the MDverse data explorer prototype 🔎</h1>
 
     <p>Below is the dataset origin summary:</p>
-
 
     <table id="SummaryTable" class="display" style="width:100%">
         <thead>
@@ -184,8 +156,10 @@
     <!-- Bokeh scripts (both plots' scripts) -->
     {{ files_plot_script | safe }}
     {{ datasets_plot_script | safe }}
+{% endblock %}
 
 
+{% block script_extra %}
     <!-- JavaScript to toggle the plots -->
     <script>
         $(document).ready(function() {
@@ -203,7 +177,6 @@
             });
         });
     </script>
-
 
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">
@@ -225,8 +198,4 @@
             });
         });
     </script>
-
-</body>
-
-
-</html>
+{% endblock %}
