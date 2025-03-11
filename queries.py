@@ -50,9 +50,7 @@ def get_dataset_origin_summary():
                    .label("non_zip_files"),
 
                 # Sum size of files that has is_from_zip_file == False
-                (
-                    func.sum(File.size_in_bytes == True)
-                    .filter(File.is_from_zip_file == False)/ 1e9
+                (func.sum(File.size_in_bytes).filter(File.is_from_zip_file == False)/ 1e9
                 ).label("total_size_in_GB_non_zip_and_zip_files"),
 
                 # Count parent zip files (FileType.name == 'zip')
@@ -101,8 +99,7 @@ def get_dataset_origin_summary():
                 row.total_files for row in datasets_stats_results
                 )),
             "Total size in GB for non-zip and zip files ": "{:,.0f}".format(sum(
-                row.total_size_in_GB_non_zip_and_zip_files
-                for row in datasets_stats_results
+                row.total_size_in_GB_non_zip_and_zip_files for row in datasets_stats_results
                 )),
         }
 
