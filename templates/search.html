@@ -1,6 +1,8 @@
 <!-- templates/search.html -->
 <!DOCTYPE html>
 <html>
+
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,17 +10,24 @@
     
     <!-- Bulma CSS -->
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"> -->
-    <!-- DataTables CSS+JS -->
+    
+    <!-- DataTables CSS + JS -->
     <!-- https://datatables.net/download/ -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+
+    <link href="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.css" rel="stylesheet" integrity="sha384-I4/lBH5Ccr4H+zWkgZKgw+25BTqhOtQ19dxtlM831GM+YFw3OTWq2i12hoyfbfG7" crossorigin="anonymous">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.js" integrity="sha384-tIv+/jMSAROhLvH+FmDUrriZf12whWUskuKSHrpD9poD1Wn5pzQM8PPBeB9qtgtM" crossorigin="anonymous"></script>
+    
     <!-- HTMX -->
     <!-- https://htmx.org/ -->
     <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+    
+    <!-- Ellisis -->
     <style>
         .ellipsis {
-            max-width: 200px; /* adjust width as needed */
+            max-width: 50px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -29,7 +38,7 @@
     <style>
         header {
           background-color: #fc8d62;
-          padding: 8px;
+          padding: 5px;
         }
         nav {
           display: flex;
@@ -39,7 +48,7 @@
         nav a {
           color: white;
           text-decoration: none;
-          font-size: 18px;
+          font-size: 14px;
           font-weight: bold;
           padding: 10px 20px;
           border-radius: 4px;
@@ -49,8 +58,12 @@
           background-color: rgba(255, 255, 255, 0.2);
         }
       </style>
+
 </head>
+
+
 <body>
+
     <header>
         <nav>
             <a href="/">Home</a>
@@ -60,6 +73,7 @@
 
 
     <h1>Datasets search table </h1>
+
 
     <table id="DatasetsSearchTable" class="display" style="width:100%">
         <thead>
@@ -78,6 +92,7 @@
                 <th>Keywords</th>
             </tr>
         </thead>
+
         <tbody>
             {% for dataset in datasets %}
             <tr hx-trigger="click" hx-get="/dataset/{{ dataset.dataset_id }}" hx-swap="innerHTML" hx-target="#dataset_details">
@@ -119,11 +134,14 @@
             </tr>
             {% endfor %}
         </tbody>
+
     </table>
 
+    <!-- Dataset details when we click on a row from the dataset table -->
     <div id="dataset_details">
 
     </div>
+
 
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">
@@ -131,14 +149,21 @@
             $('#DatasetsSearchTable').DataTable({
                 // fixedHeader: true,
                 // autoWidth: true,
+                layout: {
+                    topStart: {
+                        searchBuilder: {
+                            columns: [0, 3, 5, 6, 7, 8, 9]
+                        }
+                    }
+                },
                 columnDefs: [
                 { width: '6%', targets: 0 },    // Origin
                 { width: '6%', targets: 1 },    // ID in origin
                 { width: '20%', targets: 2 },   // Title
-                { width: '7%', targets: 3 },   // Authors
+                { width: '7%', targets: 3 },    // Authors
                 { width: '3%', targets: 4 },    // URL
-                { width: '6%', targets: 5 },   // Date created
-                { width: '6%', targets: 6 },   // Date last modified
+                { width: '6%', targets: 5 },    // Date created
+                { width: '6%', targets: 6 },    // Date last modified
                 { width: '3%', targets: 7 },    // File number
                 { width: '3%', targets: 8 },    // Download number
                 { width: '3%', targets: 9 },    // View number
@@ -148,5 +173,7 @@
             });
         });
     </script>
+
+
 </body>
 </html>

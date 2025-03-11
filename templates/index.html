@@ -1,6 +1,8 @@
 <!-- templates/index.html -->
 <!DOCTYPE html>
 <html>
+
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,19 +11,17 @@
     <!-- Bulma CSS -->
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"> -->
     
-    <!-- DataTables CSS+JS -->
+    <!-- DataTables CSS + JS -->
     <!-- https://datatables.net/download/ -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
 
-
-    <!-- Bokeh CSS -->
+    <!-- Bokeh CSS + JS -->
     <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
-    <!-- Bokeh JS -->
     <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
 
-    <!-- Custom styles for buttons -->
+    <!-- Buttons for bokeh graphs -->
     <style>
         .toggle-btn {
             padding: 10px 20px;
@@ -47,7 +47,7 @@
     <style>
         header {
           background-color: #fc8d62;
-          padding: 8px;
+          padding: 5px;
         }
         nav {
           display: flex;
@@ -57,7 +57,7 @@
         nav a {
           color: white;
           text-decoration: none;
-          font-size: 18px;
+          font-size: 14px;
           font-weight: bold;
           padding: 10px 20px;
           border-radius: 4px;
@@ -67,9 +67,12 @@
           background-color: rgba(255, 255, 255, 0.2);
         }
       </style>
+
 </head>
 
+
 <body>
+
       <header>
         <nav>
           <a href="/">Home</a>
@@ -77,8 +80,12 @@
         </nav>
       </header>
 
+
     <h1>Welcome to the MDverse data explorer prototype 🔎!</h1>
+
+
     <p>Below is the dataset origin summary:</p>
+
 
     <table id="SummaryTable" class="display" style="width:100%">
         <thead>
@@ -89,6 +96,7 @@
                 {% endfor %}
             </tr>
         </thead>
+
         <tbody>
         {% for row in results %}
             <tr>
@@ -104,6 +112,7 @@
             </tr>
         {% endfor %}
         </tbody>
+
         <tfoot>
         
             <tr>
@@ -116,7 +125,10 @@
         
     </table>
 
+
     <p>Below is the stats on the different file types</p>
+
+
     <table id="FileTypeTable" class="display" style="width:100%">
         <thead>
             <tr>
@@ -126,6 +138,7 @@
                 <th class="dt-right">Total size in GB</th>
             </tr>
         </thead>
+
         <tbody>
         {% for row in file_type_stats_summary|sort(attribute='number_of_files', reverse=True) %}
             <tr>
@@ -137,6 +150,7 @@
         {% endfor %}
         </tbody>
     </table>
+
 
     <!-- Display the wordcloud image -->
     <div>
@@ -153,6 +167,7 @@
         <button id="datasetsBtn" class="toggle-btn">Number of datasets per year</button>
     </div>
     
+
     <!-- Plot container using Flexbox to center child elements -->
     <div class="plot-section" style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
         <!-- By default, show the files plot -->
@@ -165,9 +180,11 @@
         </div>
     </div>
     
+
     <!-- Bokeh scripts (both plots' scripts) -->
     {{ files_plot_script | safe }}
     {{ datasets_plot_script | safe }}
+
 
     <!-- JavaScript to toggle the plots -->
     <script>
@@ -186,6 +203,7 @@
             });
         });
     </script>
+
 
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">
@@ -207,5 +225,8 @@
             });
         });
     </script>
+
 </body>
+
+
 </html>
