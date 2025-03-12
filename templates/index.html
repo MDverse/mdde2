@@ -43,7 +43,7 @@
             <div class="cell">
                 <p>Below is the dataset origin summary:</p>
 
-                <table id="SummaryTable" class="table is-striped is-narrow is-hoverable">
+                <table id="SummaryTable" class="table is-striped is-narrow is-hoverable is-size-7">
                     <thead>
                         <tr>
                             <th>Dataset origin</th>
@@ -70,11 +70,10 @@
                     </tbody>
 
                     <tfoot>
-                    
                         <tr>
-                        <td>Total</td>
+                        <td><strong>Total</strong></td>
                         {% for key, value in total_count.items() %}
-                        <td>{{ value|e }}</td>
+                        <td><strong>{{ value|e }}</strong></td>
                         {% endfor %}
                         </tr>
                     </tfoot>
