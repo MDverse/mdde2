@@ -1,21 +1,6 @@
-<!-- templates/search.html -->
-<!DOCTYPE html>
-<html>
+{% extends "base.html" %}
 
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dataset search</title>
-    
-    <!-- Bulma CSS -->
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"> -->
-    
-    <!-- DataTables CSS + JS -->
-    <!-- https://datatables.net/download/ -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
+{% block head_extra %}
 
     <link href="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.css" rel="stylesheet" integrity="sha384-I4/lBH5Ccr4H+zWkgZKgw+25BTqhOtQ19dxtlM831GM+YFw3OTWq2i12hoyfbfG7" crossorigin="anonymous">
     <script src="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.js" integrity="sha384-tIv+/jMSAROhLvH+FmDUrriZf12whWUskuKSHrpD9poD1Wn5pzQM8PPBeB9qtgtM" crossorigin="anonymous"></script>
@@ -33,45 +18,9 @@
             text-overflow: ellipsis;
         }
       </style>
+{% endblock %}
 
-    <!-- Navigation header CSS -->
-    <style>
-        header {
-          background-color: #fc8d62;
-          padding: 5px;
-        }
-        nav {
-          display: flex;
-          justify-content: flex-start;
-          gap: 20px;
-        }
-        nav a {
-          color: white;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: bold;
-          padding: 10px 20px;
-          border-radius: 4px;
-          transition: background 0.3s ease;
-        }
-        nav a:hover {
-          background-color: rgba(255, 255, 255, 0.2);
-        }
-      </style>
-
-</head>
-
-
-<body>
-
-    <header>
-        <nav>
-            <a href="/">Home</a>
-            <a href="/search">Search</a>
-        </nav>
-    </header>
-
-
+{% block main %}
     <h1>Datasets search table </h1>
 
 
@@ -141,8 +90,9 @@
     <div id="dataset_details">
 
     </div>
+{% endblock %}
 
-
+{% block script_extra %}
     <!-- Script that initializes DataTables -->
     <script type="text/javascript">
         $(document).ready(function() {
@@ -173,7 +123,4 @@
             });
         });
     </script>
-
-
-</body>
-</html>
+{% endblock %}
