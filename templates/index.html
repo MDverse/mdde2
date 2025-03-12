@@ -30,81 +30,95 @@
 {% endblock %}
 
 {% block main %}
-    <h1>Welcome to the MDverse data explorer prototype 🔎</h1>
-
-    <p>Below is the dataset origin summary:</p>
-
-    <table id="SummaryTable" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>Dataset origin</th>
-                {% for key, value in total_count.items() %}
-                <th>{{ key|e }}</th>
-                {% endfor %}
-            </tr>
-        </thead>
-
-        <tbody>
-        {% for row in results %}
-            <tr>
-                <td>{{ row.dataset_origin }}</td>
-                <td>{{ "{:,}".format(row.number_of_datasets) }}</td>
-                <td>{{ row.first_dataset }}</td>
-                <td>{{ row.last_dataset }}</td>
-                <td>{{ "{:,}".format(row.non_zip_files) }}</td>
-                <td>{{ "{:,}".format(row.zip_files) }}</td>
-                <td>{{ "{:,}".format(row.files_within_zip_files) }}</td>
-                <td>{{ "{:,}".format(row.total_files) }}</td>
-                <td>{{ "{:,.0f}".format(row.total_size_in_GB_non_zip_and_zip_files) }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-
-        <tfoot>
-        
-            <tr>
-              <td>Total</td>
-              {% for key, value in total_count.items() %}
-              <td>{{ value|e }}</td>
-              {% endfor %}
-            </tr>
-          </tfoot>
-        
-    </table>
-
-
-    <!-- Display the wordcloud image -->
-    <div>
-        <h2>Keyword wordcloud</h2>
-        <div style="text-align: center;">
-            <img src="/static/wordcloud.png" alt="Keyword Wordcloud" style="max-width:50%; height:auto;">
-        </div>
-    </div>
-
-
-    <!-- Toggle buttons for plots -->
-    <div style="text-align: center; margin-top: 20px;">
-        <button id="filesBtn" class="toggle-btn active">Number of files per year</button>
-        <button id="datasetsBtn" class="toggle-btn">Number of datasets per year</button>
+    <h1 class="title is-1 is-spaced">Welcome to the MDverse data explorer prototype 🔎</h1>
+    <!-- <div class=""></div> -->
+    <div class="content" style="overflow-wrap: break-word;">
+        <p>
+            AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        </p>
     </div>
     
+    <div class="fixed-grid">
+        <div class="grid">
+            <div class="cell">
+                <p>Below is the dataset origin summary:</p>
 
-    <!-- Plot container using Flexbox to center child elements -->
-    <div class="plot-section" style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
-        <!-- By default, show the files plot -->
-        <div id="filesPlot" style="width: 800px;">
-            {{ files_plot_div | safe }}
-        </div>
-        <!-- The datasets plot is hidden by default -->
-        <div id="datasetsPlot" style="width: 800px; display: none;">
-            {{ datasets_plot_div | safe }}
+                <table id="SummaryTable" class="table is-striped is-narrow is-hoverable">
+                    <thead>
+                        <tr>
+                            <th>Dataset origin</th>
+                            {% for key, value in total_count.items() %}
+                            <th>{{ key|e }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for row in results %}
+                        <tr>
+                            <td>{{ row.dataset_origin }}</td>
+                            <td>{{ "{:,}".format(row.number_of_datasets) }}</td>
+                            <td>{{ row.first_dataset }}</td>
+                            <td>{{ row.last_dataset }}</td>
+                            <td>{{ "{:,}".format(row.non_zip_files) }}</td>
+                            <td>{{ "{:,}".format(row.zip_files) }}</td>
+                            <td>{{ "{:,}".format(row.files_within_zip_files) }}</td>
+                            <td>{{ "{:,}".format(row.total_files) }}</td>
+                            <td>{{ "{:,.0f}".format(row.total_size_in_GB_non_zip_and_zip_files) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                    <tfoot>
+                    
+                        <tr>
+                        <td>Total</td>
+                        {% for key, value in total_count.items() %}
+                        <td>{{ value|e }}</td>
+                        {% endfor %}
+                        </tr>
+                    </tfoot>
+                    
+                </table>
+            </div>
+
+            <div class="cell">
+            <!-- Display the wordcloud image -->
+                <h2>Keyword wordcloud</h2>
+                <figure class="image" style="max-width: 100%;">
+                    <img src="/static/wordcloud.png" alt="Keyword Wordcloud" />
+                  </figure>
+            </div>
+
+            <div class="cell is-col-span-2">
+                <!-- Toggle buttons for plots -->
+                <div style="text-align: center; margin-top: 20px;">
+                    <button id="filesBtn" class="toggle-btn active">Number of files per year</button>
+                    <button id="datasetsBtn" class="toggle-btn">Number of datasets per year</button>
+                </div>
+
+                <!-- Plot container using Flexbox to center child elements -->
+                <div class="plot-section" style="display: flex; flex-direction: column; align-items: center; margin-top: 20px;">
+                    <!-- By default, show the files plot -->
+                    <div id="filesPlot" style="width: 800px;">
+                        {{ files_plot_div | safe }}
+                    </div>
+                    <!-- The datasets plot is hidden by default -->
+                    <div id="datasetsPlot" style="width: 800px; display: none;">
+                        {{ datasets_plot_div | safe }}
+                    </div>
+                </div>
+                
+            
+                <!-- Bokeh scripts (both plots' scripts) -->
+                {{ files_plot_script | safe }}
+                {{ datasets_plot_script | safe }}
+            </div>
+
         </div>
     </div>
-    
 
-    <!-- Bokeh scripts (both plots' scripts) -->
-    {{ files_plot_script | safe }}
-    {{ datasets_plot_script | safe }}
+    
 {% endblock %}
 
 
@@ -135,15 +149,11 @@
             "searching": false,
             "info": false,
             autoWidth: false,
+            responsive: true,
+            columnDefs: [{ orderable: false, targets: [0,1,2,3,4,5,6,7,8] }],
             // Disable the highlight/bold style on the sorted column
             orderClasses: false,
 
-            });
-            $('#FileTypeTable').DataTable({
-                "order": [[1, 'desc']],
-                autoWidth: false,
-                // Disable the highlight/bold style on the sorted column
-                orderClasses: false,
             });
         });
     </script>
