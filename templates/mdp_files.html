@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+
+<!-- Bokeh CSS + JS -->
+<link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
+<script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
+
+{% endblock %}
+
+{% block main %}
+    <h1>MDP files</h1>
+
+    <p>Below is the MDP files summary:</p>
+
+    <!-- <table id="MDPFilesTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>File name</th>
+                <th>File size (GB)</th>
+                <th>File type</th>
+                <th>File format</th>
+                <th>File description</th>
+                <th>File keywords</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for file in files %}
+            <tr>
+                <td>{{ file.file_name }}</td>
+                <td>{{ "{:,.0f}".format(file.file_size_in_GB) }}</td>
+                <td>{{ file.file_type }}</td>
+                <td>{{ file.file_format }}</td>
+                <td>{{ file.file_description }}</td>
+                <td>{{ file.file_keywords }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table> -->
+{% endblock %}
