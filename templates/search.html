@@ -12,7 +12,7 @@
     <!-- Ellisis -->
     <style>
         .ellipsis {
-            max-width: 50px;
+            max-width: 15px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -47,7 +47,7 @@
             <tr hx-trigger="click" hx-get="/dataset/{{ dataset.dataset_id }}" hx-swap="innerHTML" hx-target="#dataset_details">
                 <!-- Show the origin's name -->
                 <td>{{ dataset.origin.name if dataset.origin else 'N/A' }}</td>
-                <td>{{ dataset.id_in_origin }}</td>
+                <td class="ellipsis" title="{{ dataset.id_in_origin }}">{{ dataset.id_in_origin }}</td>
                 <td class="ellipsis" title="{{ dataset.title }}">
                     {{ dataset.title }}
                 </td>
@@ -98,7 +98,7 @@
         $(document).ready(function() {
             $('#DatasetsSearchTable').DataTable({
                 // fixedHeader: true,
-                // autoWidth: true,
+                autoWidth: false,
                 layout: {
                     topStart: {
                         searchBuilder: {
@@ -106,20 +106,20 @@
                         }
                     }
                 },
-                columnDefs: [
-                { width: '6%', targets: 0 },    // Origin
-                { width: '6%', targets: 1 },    // ID in origin
-                { width: '20%', targets: 2 },   // Title
-                { width: '7%', targets: 3 },    // Authors
-                { width: '3%', targets: 4 },    // URL
-                { width: '6%', targets: 5 },    // Date created
-                { width: '6%', targets: 6 },    // Date last modified
-                { width: '3%', targets: 7 },    // File number
-                { width: '3%', targets: 8 },    // Download number
-                { width: '3%', targets: 9 },    // View number
-                { width: '20%', targets: 10 },  // Description
-                { width: '15%', targets: 11 },  // Keywords
-            ]
+            //     columnDefs: [
+            //     { width: '6%', targets: 0 },    // Origin
+            //     { width: '6%', targets: 1 },    // ID in origin
+            //     { width: '20%', targets: 2 },   // Title
+            //     { width: '9%', targets: 3 },    // Authors
+            //     { width: '2%', targets: 4 },    // URL
+            //     { width: '10%', targets: 5 },    // Date created
+            //     { width: '10%', targets: 6 },    // Date last modified
+            //     { width: '1%', targets: 7 },    // File number
+            //     { width: '1%', targets: 8 },    // Download number
+            //     { width: '1%', targets: 9 },    // View number
+            //     { width: '20%', targets: 10 },  // Description
+            //     { width: '14%', targets: 11 },  // Keywords
+            // ]
             });
         });
     </script>

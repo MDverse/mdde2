@@ -25,7 +25,7 @@ async def read_index(request: Request):
 
     # Get the data from query
     datasets_stats_results, datasets_stats_total_count = get_dataset_origin_summary()
-    file_type_stats_summary = get_file_type_stats()
+    
 
 
     # Create both Bokeh plots.
@@ -43,7 +43,6 @@ async def read_index(request: Request):
             "request": request,
             "results": datasets_stats_results,
             "total_count": datasets_stats_total_count,
-            "file_type_stats_summary": file_type_stats_summary,
             "files_plot_script": files_plot_script,
             "files_plot_div": files_plot_div,
             "datasets_plot_script": datasets_plot_script,
@@ -76,3 +75,22 @@ async def get_dataset_info(
         "dataset_info.html",
         {"request": request, "dataset": dataset}
     )
+
+@app.get("/file_types")
+async def gro_files(request: Request):
+    file_type_stats_summary = get_file_type_stats()
+    return templates.TemplateResponse(
+        "file_types.html",
+        {
+            "request": request,
+            "file_type_stats_summary": file_type_stats_summary,
+        }
+    )
+
+@app.get("/gro_files")
+async def gro_files(request: Request):
+    return templates.TemplateResponse("gro_files.html", {"request": request})
+
+@app.get("/mdp_files")
+async def gro_files(request: Request):
+    return templates.TemplateResponse("mdp_files.html", {"request": request})
