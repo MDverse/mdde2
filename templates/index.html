@@ -38,9 +38,9 @@
         </p>
     </div>
     
-    <div class="fixed-grid">
+    <div class="fixed-grid has-5-cols">
         <div class="grid">
-            <div class="cell">
+            <div class="cell is-col-span-3">
                 <p>Below is the dataset origin summary:</p>
 
                 <table id="SummaryTable" class="table is-striped is-narrow is-hoverable is-size-7">
@@ -81,15 +81,14 @@
                 </table>
             </div>
 
-            <div class="cell">
+            <div class="cell is-col-span-2">
             <!-- Display the wordcloud image -->
-                <h2>Keyword wordcloud</h2>
-                <figure class="image" style="max-width: 100%;">
-                    <img src="/static/wordcloud.png" alt="Keyword Wordcloud" />
-                  </figure>
+                <figure class=""image">
+                    <img src="/static/wordcloud.png" alt="Keyword Wordcloud" width="100%"/>
+                </figure>
             </div>
 
-            <div class="cell is-col-span-2">
+            <div class="cell is-col-span-5">
                 <!-- Toggle buttons for plots -->
                 <div style="text-align: center; margin-top: 20px;">
                     <button id="filesBtn" class="toggle-btn active">Number of files per year</button>
