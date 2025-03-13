@@ -18,6 +18,10 @@ from db_schema import (
     engine,
 )
 
+# ============================================================================
+# Queries for index.html
+# ============================================================================
+
 
 def get_dataset_origin_summary():
     """
@@ -104,64 +108,6 @@ def get_dataset_origin_summary():
         }
 
         return datasets_stats_results, datasets_stats_total_count
-
-
-def get_file_type_stats():
-    """
-    Retrieves statistics for each file type, including:
-    - the number of files per file type,
-    - the number of datasets per file type,
-    - the total size of files per file type in gigabytes.
-
-    Returns:
-    file_type_stats_summary (list): A list of results where
-    each result is a row containing:
-        - file_type (str): The name of the file type.
-        - number_of_files (int): The count of files for this file type.
-        - number_of_datasets (int): The count of datasets containing
-                                    files of this file type.
-        - total_size_in_GB (float): The total size of files for this
-                                    file type in gigabytes.
-    """
-    with Session(engine) as session:
-
-        statement = (
-            select(
-            FileType.name.label("file_type"),
-            func.count(File.file_id).label("number_of_files"),
-            func.count(func.distinct(Dataset.dataset_id)).label("number_of_datasets"),
-            (func.sum(File.size_in_bytes) / 1e9).label("total_size_in_GB"),
-            )
-            .join(File, File.file_type_id == FileType.file_type_id)
-            .outerjoin(Dataset, Dataset.dataset_id == File.dataset_id)
-            .group_by(FileType.name)
-            # .order_by(func.count(func.distinct(File.file_id)).desc())
-            # order_by could be used to sort the results
-            # by the number of files per file type
-            # but it is not necessary for this example
-            # because the template will sort the results
-            # in the frontend using the DataTables options
-        )
-
-        file_type_stats_summary = session.exec(statement).all()
-
-        return file_type_stats_summary
-
-
-def get_all_datasets():
-    """
-    Returns a list of all dataset objects, with their related objects loaded.
-    """
-    with Session(engine) as session:
-        statement = select(Dataset).options(
-            # Load the related origin object so that dataset.origin is available.
-            selectinload(Dataset.origin),
-            # Load the many-to-many relationship for authors and keywords
-            selectinload(Dataset.author),
-            selectinload(Dataset.keyword)
-        )
-        results = session.exec(statement).all()
-        return results
 
 
 def get_keywords():
@@ -361,6 +307,75 @@ def create_datasets_plot():
     return p
 
 
+# ============================================================================
+# Queries for file_types.html
+# ============================================================================
+
+
+def get_file_type_stats():
+    """
+    Retrieves statistics for each file type, including:
+    - the number of files per file type,
+    - the number of datasets per file type,
+    - the total size of files per file type in gigabytes.
+
+    Returns:
+    file_type_stats_summary (list): A list of results where
+    each result is a row containing:
+        - file_type (str): The name of the file type.
+        - number_of_files (int): The count of files for this file type.
+        - number_of_datasets (int): The count of datasets containing
+                                    files of this file type.
+        - total_size_in_GB (float): The total size of files for this
+                                    file type in gigabytes.
+    """
+    with Session(engine) as session:
+
+        statement = (
+            select(
+            FileType.name.label("file_type"),
+            func.count(File.file_id).label("number_of_files"),
+            func.count(func.distinct(Dataset.dataset_id)).label("number_of_datasets"),
+            (func.sum(File.size_in_bytes) / 1e9).label("total_size_in_GB"),
+            )
+            .join(File, File.file_type_id == FileType.file_type_id)
+            .outerjoin(Dataset, Dataset.dataset_id == File.dataset_id)
+            .group_by(FileType.name)
+            # .order_by(func.count(func.distinct(File.file_id)).desc())
+            # order_by could be used to sort the results
+            # by the number of files per file type
+            # but it is not necessary for this example
+            # because the template will sort the results
+            # in the frontend using the DataTables options
+        )
+
+        file_type_stats_summary = session.exec(statement).all()
+
+        return file_type_stats_summary
+
+
+# ============================================================================
+# Queries for search.html
+# ============================================================================
+
+
+def get_all_datasets(offset: int = 0, limit: int = 10) -> list[Dataset]:
+    """
+    Returns a list of all dataset objects, with their related objects loaded.
+    """
+    with Session(engine) as session:
+        statement = (
+            select(Dataset)
+            .options(
+                selectinload(Dataset.origin),
+                selectinload(Dataset.author),
+                selectinload(Dataset.keyword),
+            )
+        )
+        results = session.exec(statement).all()
+        return results
+
+
 def get_dataset_by_id(dataset_id: int):
     """
     Returns dataset from its id.
@@ -379,3 +394,18 @@ def get_dataset_by_id(dataset_id: int):
         )
         result = session.exec(statement).first()
         return result
+
+
+# ============================================================================
+# Queries for gro_files.html
+# ============================================================================
+
+def get_gro_files_info():
+    pass
+
+# ============================================================================
+# Queries for mdp_files.html
+# ============================================================================
+
+def get_mdp_files_info():
+    pass
