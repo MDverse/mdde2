@@ -207,7 +207,7 @@ def generate_keyword_wordcloud():
     plt.axis("off")
 
     # Save the wordcloud image
-    plt.savefig(wordcloud_path, dpi=500)
+    plt.savefig(wordcloud_path, dpi=500, bbox_inches="tight")
     print(f"Wordcloud saved as {wordcloud_path}")
 
 
