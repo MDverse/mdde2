@@ -1,68 +1,76 @@
 <h2>Dataset information</h2>
 
-<p>
-Origin: {{ dataset.origin.name if dataset.origin else 'N/A' }}
-</p>
-
-<p>
-ID in origin: {{ dataset.id_in_origin }}
-</p>
-
-<p>
-Title: {{ dataset.title }}
-</p>
-
-<p>
-Description: {{ dataset.description }}
-</p>
-
-<p>
-Authors:
-{% if dataset.author %}
-    {% for author in dataset.author %}
-        {{ author.name }}{% if not loop.last %}; {% endif %}
-    {% endfor %}
-{% else %}
-    N/A
-{% endif %}
-</p>
+<div class="card">
+    <div class="card-content">
+      <p class="title">
+        {{ dataset.title }}
+      </p>
+      <p class="subtitle">
+        {% if dataset.author %}
+            {% for author in dataset.author %}
+                {{ author.name }}{% if not loop.last %}; {% endif %}
+            {% endfor %}
+        {% else %}
+            N/A
+        {% endif %}
+      </p>
 
 
-DOI: <a href="https://doi.org/{{ dataset.doi }}" target="_blank">{{ dataset.doi }}</a>
-</p>
 
-<p>
-Date created: {{ dataset.date_created }}
-|
-Date last modified: {{ dataset.date_last_modified }}
-|
-Date last crawled: {{ dataset.date_last_crawled }}
-</p>
+        <div class="content">
+            <p class="title is-5">General information</p>
+            <ul>
+                <li>Origin: {{ dataset.origin.name if dataset.origin else 'N/A' }}</li>
+                <li>ID in origin: {{ dataset.id_in_origin }}</li>
+                <li>Licence: {{ dataset.license }}</li>
+                <li>DOI: <a href="https://doi.org/{{ dataset.doi }}" target="_blank">{{ dataset.doi }}</a></li>
+                <li>URL: <a href="{{ dataset.url }}" target="_blank">{{ dataset.url }}</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            <p class="title is-5">Description</p>
+            <p>{{ dataset.description }}</p>
+        </div>
 
-<p>
-Number of files: {{ dataset.file_number }}
-|
-Number of downloads: {{ dataset.download_number }}
-|
-Number of views: {{ dataset.view_number }}
-</p>
+        <div class="content">
+            <p class="title is-5">Keywords</p>
+            <p>{% if dataset.keyword %}
+                {% for keyword in dataset.keyword %}
+                    {{ keyword.entry }}{% if not loop.last %}; {% endif %}
+                {% endfor %}
+            {% else %}
+                N/A
+            {% endif %}</p>
+        </div>
 
-<p>
-Licence: {{ dataset.license }}
-</p>
 
-<p>
-URL: <a href="{{ dataset.url }}" target="_blank">{{ dataset.url }}</a>
-</p>
 
-<p>
-Keywords:
-<!-- For many-to-many relationships like keywords, loop and separate by semicolons -->
-{% if dataset.keyword %}
-    {% for keyword in dataset.keyword %}
-        {{ keyword.entry }}{% if not loop.last %}; {% endif %}
-    {% endfor %}
-{% else %}
-    N/A
-{% endif %}
-</p>
+        <div class="content">
+            <p class="title is-5">Additional information</p>
+            <ul>
+                <li>Number of files: {{ dataset.file_number }}</li>
+                <li>Number of downloads: {{ dataset.download_number }}</li>
+                <li>Number of views: {{ dataset.view_number }}</li>
+            </ul>
+        </div>
+    </div>
+    <footer class="card-footer">
+        <p class="card-footer-item">
+          <span>
+            Date created: <strong>{{ dataset.date_created }}</strong>
+          </span>
+        </p>
+
+        <p class="card-footer-item">
+            <span>
+                Date last modified: <strong>{{ dataset.date_last_modified }}</strong>
+            </span>
+        </p>
+
+        <p class="card-footer-item">
+            <span>
+                Date last crawled: <strong>{{ dataset.date_last_crawled }}</strong>
+            </span>
+          </p>
+    </footer>
+</div>
