@@ -110,18 +110,59 @@ def get_dataset_origin_summary():
         return datasets_stats_results, datasets_stats_total_count
 
 
-def get_keywords():
+# def get_keywords():
+#     with Session(engine) as session:
+#         statement = (
+#             select(Keyword.entry)
+#             .join(DatasetKeywordLink)
+#         )
+
+#         keywords = session.exec(statement).all()
+#     return keywords
+
+
+# def generate_keyword_wordcloud():
+#     wordcloud_path = Path("static/wordcloud.png")
+
+#     # Check if the file already exists
+#     if wordcloud_path.exists():
+#         print("Wordcloud already exists, skipping generation.")
+#         return
+
+#     # Retrieve keywords using the query function
+#     keywords = get_keywords()  # e.g. ['molecule', 'simulation', 'protein', ...]
+
+#     # Join all keywords into a single string (space separated)
+#     text = " ".join(keywords)
+
+#     # Define custom stopwords to remove unwanted words
+#     custom_stopwords = set(STOPWORDS)
+#     custom_stopwords.update(["none"])
+
+#     # Create the WordCloud object
+#     wordcloud = WordCloud(
+#         width=1600,
+#         height=800,
+#         background_color="white",
+#         stopwords=custom_stopwords
+#     ).generate(text)
+
+#     # Create the figure
+#     plt.figure(figsize=(10, 5))
+#     plt.imshow(wordcloud, interpolation="bilinear")
+#     plt.axis("off")
+
+#     # Save the wordcloud image
+#     plt.savefig(wordcloud_path, dpi=500, bbox_inches="tight")
+#     print(f"Wordcloud saved as {wordcloud_path}")
+
+def get_titles():
     with Session(engine) as session:
-        statement = (
-            select(Keyword.entry)
-            .join(DatasetKeywordLink)
-        )
+        statement = select(Dataset.title)
+        titles = session.exec(statement).all()
+    return titles
 
-        keywords = session.exec(statement).all()
-    return keywords
-
-
-def generate_keyword_wordcloud():
+def generate_title_wordcloud():
     wordcloud_path = Path("static/wordcloud.png")
 
     # Check if the file already exists
@@ -129,17 +170,35 @@ def generate_keyword_wordcloud():
         print("Wordcloud already exists, skipping generation.")
         return
 
-    # Retrieve keywords using the query function
-    keywords = get_keywords()  # e.g. ['molecule', 'simulation', 'protein', ...]
+    # Retrieve dataset titles using the query function
+    titles = get_titles()  # e.g. ['Dataset Title 1', 'Dataset Title 2', ...]
 
-    # Join all keywords into a single string (space separated)
-    text = " ".join(keywords)
+    # Join all titles into a single string (space separated)
+    text = " ".join(titles)
 
-    # Define custom stopwords to remove unwanted words
+    # Define custom stopwords to remove unwanted words (adjust as needed)
     custom_stopwords = set(STOPWORDS)
-    custom_stopwords.update(["none"])
+    custom_stopwords.update([
+        "none",
+        "and",
+        "of",
+        "with",
+        ",",
+        "which",
+        "incl",
+        "from",
+        "the",
+        "a",
+        "an",
+        "for",
+        "on",
+        "in",
+        "to",
+        "by",
+        "as",
+        ])
 
-    # Create the WordCloud object
+    # Create the WordCloud object with the desired resolution settings
     wordcloud = WordCloud(
         width=1600,
         height=800,
@@ -147,12 +206,12 @@ def generate_keyword_wordcloud():
         stopwords=custom_stopwords
     ).generate(text)
 
-    # Create the figure
+    # Create the figure and display the wordcloud image
     plt.figure(figsize=(10, 5))
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
 
-    # Save the wordcloud image
+    # Save the wordcloud image with a high DPI for better resolution
     plt.savefig(wordcloud_path, dpi=500, bbox_inches="tight")
     print(f"Wordcloud saved as {wordcloud_path}")
 

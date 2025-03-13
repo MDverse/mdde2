@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from queries import (
     create_datasets_plot,
     create_files_plot,
-    generate_keyword_wordcloud,
+    generate_title_wordcloud,
     get_all_datasets,
     get_dataset_by_id,
     get_dataset_origin_summary,
@@ -21,12 +21,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 async def read_index(request: Request):
     # Generate the wordcloud image.
-    generate_keyword_wordcloud()
+    generate_title_wordcloud()
 
     # Get the data from query
     datasets_stats_results, datasets_stats_total_count = get_dataset_origin_summary()
     
-
 
     # Create both Bokeh plots.
     files_plot = create_files_plot()
