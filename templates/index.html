@@ -30,7 +30,11 @@
 {% endblock %}
 
 {% block main %}
-    <h1 class="title is-1 is-spaced">Welcome to the MDverse data explorer prototype 🔎</h1>
+<section class="section">
+    <div class="content">
+        <h1 class="title is-1 is-spaced">Welcome to the MDverse data explorer prototype 🔎</h1>
+    </div>
+    
     <!-- <div class=""></div> -->
     <div class="content" style="overflow-wrap: break-word;">
         <p>
@@ -43,7 +47,7 @@
             <div class="cell is-col-span-3">
                 <p>Below is the dataset origin summary:</p>
 
-                <table id="SummaryTable" class="table is-striped is-narrow is-hoverable is-size-7">
+                <table id="SummaryTable" class="table is-striped is-narrow is-hoverable is-size-8">
                     <thead>
                         <tr>
                             <th>Dataset origin</th>
@@ -83,7 +87,7 @@
 
             <div class="cell is-col-span-2">
             <!-- Display the wordcloud image -->
-                <figure class=""image">
+                <figure class="image">
                     <img src="/static/wordcloud.png" alt="Keyword Wordcloud" width="100%"/>
                 </figure>
             </div>
@@ -115,7 +119,7 @@
 
         </div>
     </div>
-
+</section>
     
 {% endblock %}
 
