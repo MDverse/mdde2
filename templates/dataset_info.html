@@ -36,7 +36,7 @@
             <p class="title is-5">Keywords</p>
             <p>{% if dataset.keyword %}
                 {% for keyword in dataset.keyword %}
-                    {{ keyword.entry }}{% if not loop.last %}; {% endif %}
+                    <span class="tag">{{ keyword.entry }} </span>
                 {% endfor %}
             {% else %}
                 N/A
