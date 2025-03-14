@@ -15,6 +15,8 @@ from db_schema import (
     File,
     FileType,
     Keyword,
+    ParameterFile,
+    TopologyFile,
     engine,
 )
 
@@ -418,7 +420,7 @@ def get_file_type_stats():
 # ============================================================================
 
 
-def get_all_datasets(offset: int = 0, limit: int = 10) -> list[Dataset]:
+def get_all_datasets() -> list[Dataset]:
     """
     Returns a list of all dataset objects, with their related objects loaded.
     """
@@ -459,12 +461,27 @@ def get_dataset_by_id(dataset_id: int):
 # Queries for gro_files.html
 # ============================================================================
 
-def get_gro_files_info():
+def get_gro_files_info() -> list[TopologyFile]:
     pass
 
 # ============================================================================
 # Queries for mdp_files.html
 # ============================================================================
 
-def get_mdp_files_info():
-    pass
+def get_mdp_files_info() -> list[ParameterFile]:
+    """
+    Returns a list of all parameter files. The relationships to the tables
+    Barostat, Integrator, and Thermostat are loaded as well.
+    """
+    with Session(engine) as session:
+        statement = (
+            select(ParameterFile)
+            .options(
+                selectinload(ParameterFile.file),
+                selectinload(ParameterFile.barostat),
+                selectinload(ParameterFile.integrator),
+                selectinload(ParameterFile.thermostat),
+            )
+        )
+        results = session.exec(statement).all()
+        return results

@@ -6,6 +6,15 @@
 <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
 <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
 
+<!-- Ellisis -->
+<style>
+    .ellipsis {
+        max-width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
 {% endblock %}
 
 {% block main %}
@@ -14,30 +23,53 @@
 
     <p>Below is the MDP files summary:</p>
 
-    <!-- <table id="MDPFilesTable" class="display" style="width:100%">
+    <table id="MDPFilesTable" class="table is-striped is-hoverable" style="width:100%">
         <thead>
             <tr>
                 <th>File name</th>
-                <th>File size (GB)</th>
-                <th>File type</th>
-                <th>File format</th>
-                <th>File description</th>
-                <th>File keywords</th>
+                <th>Dt</th>
+                <th>Nsteps</th>
+                <th>Temperature</th>
+                <th>Thermostat</th>
+                <th>Barostat</th>
+                <th>Integrator</th>
             </tr>
         </thead>
 
         <tbody>
-        {% for file in files %}
+        {% for file in mdp_files %}
             <tr>
-                <td>{{ file.file_name }}</td>
-                <td>{{ "{:,.0f}".format(file.file_size_in_GB) }}</td>
-                <td>{{ file.file_type }}</td>
-                <td>{{ file.file_format }}</td>
-                <td>{{ file.file_description }}</td>
-                <td>{{ file.file_keywords }}</td>
+                <td class="ellipsis" title="{{ file.file.name }}">{{ file.file.name }}</td>
+                <td>{{ file.dt }}</td>
+                <td>{{ file.nsteps }}</td>
+                <td>{{ file.temperature }}</td>
+                <td>{{ file.thermostat.name }}</td>
+                <td>{{ file.barostat.name }}</td>
+                <td>{{ file.integrator.name }}</td>
             </tr>
         {% endfor %}
         </tbody>
-    </table> -->
+    </table>
 </section>
+{% endblock %}
+
+{% block script_extra %}
+    <script>
+        $(document).ready(function() {
+            $('#MDPFilesTable').DataTable({
+                "order": [[2, 'desc']],
+                autoWidth: false,
+                orderClasses: false,
+                columnDefs: [
+                { width: '35%', targets: 0 },    // File name
+                { width: '10%', targets: 1 },    // Dt
+                { width: '10%', targets: 2 },   // Nsteps
+                { width: '10%', targets: 3 },    // Temperature
+                { width: '10%', targets: 4 },    // Thermostat
+                { width: '15%', targets: 5 },    // Barostat
+                { width: '10%', targets: 6 },    // Integrator
+            ],
+            });
+        });
+    </script>
 {% endblock %}
