@@ -1,0 +1,86 @@
+<p class="title">
+{{ dataset.title }}
+</p>
+
+<p class="subtitle">
+{% if dataset.author %}
+    {% for author in dataset.author %}
+        {{ author.name }}{% if not loop.last %}; {% endif %}
+    {% endfor %}
+{% else %}
+    N/A
+{% endif %}
+</p>
+
+<div class="content">
+    <p class="title is-5">General information</p>
+    <ul>
+        <li>Origin: {{ dataset.origin.name if dataset.origin else 'N/A' }}</li>
+        <li>ID in origin: {{ dataset.id_in_origin }}</li>
+        <li>Licence: {{ dataset.license }}</li>
+        <li>DOI: <a href="https://doi.org/{{ dataset.doi }}" target="_blank">{{ dataset.doi }}</a></li>
+        <li>URL: <a href="{{ dataset.url }}" target="_blank">{{ dataset.url }}</a></li>
+    </ul>
+</div>
+<div class="content">
+    <p class="title is-5">Description</p>
+    <p>{{ dataset.description }}</p>
+</div>
+
+
+    <p class="title is-5">Keywords</p>
+    <p>{% if dataset.keyword %}
+        {% for keyword in dataset.keyword %}
+            <span class="tag">{{ keyword.entry }} </span>
+        {% endfor %}
+    {% else %}
+        N/A
+    {% endif %}</p>
+</div>
+
+<hr class="bd-hr">
+
+<div class="tabs is-toggle is-fullwidth">
+    <ul>
+      <li class="is-active">
+        <a>
+            <span class="icon is-small">
+                <i class="fas fa-image" aria-hidden="true"></i>
+            </span>
+            <span>All files</span>
+        </a>
+      </li>
+      <li>
+        <a>
+            <span class="icon is-small">
+                <i class="fas fa-music" aria-hidden="true"></i>
+            </span>
+            <span>Topology files</span>
+        </a>
+      </li>
+      <li>
+        <a>
+            <span class="icon is-small">
+                <i class="fas fa-film" aria-hidden="true"></i>
+            </span>
+            <span>Parameter files</span>
+        </a>
+      </li>
+      <li>
+        <a>
+            <span class="icon is-small">
+                <i class="far fa-file-alt" aria-hidden="true"></i>
+            </span>
+            <span>Trajectory files</span>
+        </a>
+      </li>
+      <li>
+        <a>
+            <span class="icon is-small">
+                <i class="far fa-file-alt" aria-hidden="true"></i>
+            </span>
+            <span>Miscellaneous files</span>
+        </a>
+      </li>
+    </ul>
+  </div>
