@@ -11,6 +11,8 @@ from queries import (
     get_dataset_by_id,
     get_dataset_origin_summary,
     get_file_type_stats,
+    get_gro_files_info,
+    get_mdp_files_info,
 )
 
 app = FastAPI()
@@ -91,5 +93,12 @@ async def gro_files(request: Request):
     return templates.TemplateResponse("gro_files.html", {"request": request})
 
 @app.get("/mdp_files")
-async def gro_files(request: Request):
-    return templates.TemplateResponse("mdp_files.html", {"request": request})
+async def mdp_files(request: Request):
+    mdp_files = get_mdp_files_info()
+    return templates.TemplateResponse(
+        "mdp_files.html",
+        {
+            "request": request,
+            "mdp_files": mdp_files,
+        }
+    )
