@@ -1,5 +1,6 @@
 from bokeh.embed import components
 from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -20,7 +21,8 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/")
+
+@app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
     # Generate the wordcloud image.
     generate_title_wordcloud()
@@ -52,7 +54,7 @@ async def read_index(request: Request):
     )
 
 
-@app.get("/search")
+@app.get("/search", response_class=HTMLResponse)
 async def search_page(request: Request):
     # Get the list of all datasets (with related data loaded)
     datasets = get_all_datasets()
@@ -66,7 +68,7 @@ async def search_page(request: Request):
     )
 
 
-@app.get("/dataset/{dataset_id}")
+@app.get("/dataset/{dataset_id}", response_class=HTMLResponse)
 async def get_dataset_info(
     request: Request,
     dataset_id: int
@@ -78,7 +80,7 @@ async def get_dataset_info(
     )
 
 
-@app.get("/files_from_dataset/{dataset_id}")
+@app.get("/files_from_dataset/{dataset_id}", response_class=HTMLResponse)
 async def get_files_from_dataset(
     request: Request,
     dataset_id: int
@@ -89,7 +91,7 @@ async def get_files_from_dataset(
         {"request": request, "dataset": dataset}
     )
 
-@app.get("/file_types")
+@app.get("/file_types", response_class=HTMLResponse)
 async def gro_files(request: Request):
     file_type_stats_summary = get_file_type_stats()
     return templates.TemplateResponse(
@@ -100,7 +102,7 @@ async def gro_files(request: Request):
         }
     )
 
-@app.get("/gro_files")
+@app.get("/gro_files", response_class=HTMLResponse)
 async def gro_files(request: Request):
     gro_files = get_gro_files_info()
     return templates.TemplateResponse(
@@ -111,7 +113,7 @@ async def gro_files(request: Request):
         }
     )
 
-@app.get("/mdp_files")
+@app.get("/mdp_files", response_class=HTMLResponse)
 async def mdp_files(request: Request):
     mdp_files = get_mdp_files_info()
     return templates.TemplateResponse(
