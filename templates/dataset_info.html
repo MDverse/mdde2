@@ -3,16 +3,16 @@
 <div class="card">
     <div class="card-content">
         <p class="title">
-        {{ dataset.title }}
+            {{ dataset.title }}
         </p>
         <p class="subtitle">
-        {% if dataset.author %}
+            {% if dataset.author %}
             {% for author in dataset.author %}
-                {{ author.name }}{% if not loop.last %}; {% endif %}
+            {{ author.name }}{% if not loop.last %}; {% endif %}
             {% endfor %}
-        {% else %}
+            {% else %}
             N/A
-        {% endif %}
+            {% endif %}
         </p>
 
         <hr class="bd-hr">
@@ -36,11 +36,12 @@
             <p class="title is-5">Keywords</p>
             <p>{% if dataset.keyword %}
                 {% for keyword in dataset.keyword %}
-                    <span class="tag">{{ keyword.entry }} </span>
+                <span class="tag">{{ keyword.entry }} </span>
                 {% endfor %}
-            {% else %}
+                {% else %}
                 N/A
-            {% endif %}</p>
+                {% endif %}
+            </p>
         </div>
 
 
@@ -56,21 +57,21 @@
     </div>
     <footer class="card-footer">
         <p class="card-footer-item">
-          <span>
-            Date created: <strong>{{ dataset.date_created }}</strong>
-          </span>
-        </p>
-
-        <p class="card-footer-item">
             <span>
-                Date last modified: <strong>{{ dataset.date_last_modified }}</strong>
+                Date created:  <strong>{{ dataset.date_created }}</strong>
             </span>
         </p>
 
         <p class="card-footer-item">
             <span>
-                Date last crawled: <strong>{{ dataset.date_last_crawled }}</strong>
+                Date last modified:  <strong>{{ dataset.date_last_modified }}</strong>
             </span>
-          </p>
+        </p>
+
+        <p class="card-footer-item">
+            <span>
+                Date last crawled:  <strong>{{ dataset.date_last_crawled }}</strong>
+            </span>
+        </p>
     </footer>
 </div>
