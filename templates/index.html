@@ -51,9 +51,14 @@
                     <thead>
                         <tr>
                             <th>Dataset origin</th>
-                            {% for key, value in total_count.items() %}
-                            <th>{{ key|e }}</th>
-                            {% endfor %}
+                            <th>Number of datasets</th>
+                            <th>First dataset</th>
+                            <th>Last dataset</th>
+                            <th>Non-zip files</th>
+                            <th>Zip files</th>
+                            <th>Files in zip files</th>
+                            <th>Total files</th>
+                            <th><abbr title="Total size in GB for non-zip and zip files">Size in GB (Zip + Non-zip)</abbr></th>
                         </tr>
                     </thead>
 
