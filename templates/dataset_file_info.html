@@ -88,13 +88,51 @@
             <li class="tabcontent is-active" id="all_files">
                 <h3 class="title is-spaced">Table containing all the files associated with the dataset</h3>
                 <table id="all_files_tables_for_specific_dataset">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>URL</th>
+                            <th>Is from zip file ?</th>
+                        </tr>
+                    </thead>
 
+                    <tbody>
+                        {% for file in files %}
+                        <tr>
+                            <td>{{ file.name }}</td>
+                            <td>{{ file.type }}</td>
+                            <td>{{ file.size }}</td>
+                            <td><a href="{{ file.url }}" target="_blank">🌐</a></td>
+                            <td>{{ file.is_from_zip }}</td>
+                        </tr>
+                        {% endfor %}
                 </table>
             </li>
             <li class="tabcontent" id="top_files">
                 <h3 class="title is-spaced">Table with all the topology files associated with the dataset</h3>
                 <table id="top_files_tables_for_specific_dataset">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>URL</th>
+                            <th>Is from zip file ?</th>
+                        </tr>
+                    </thead>
 
+                    <tbody>
+                        {% for file in files %}
+                        <tr>
+                            <td>{{ file.name }}</td>
+                            <td>{{ file.type }}</td>
+                            <td>{{ file.size }}</td>
+                            <td><a href="{{ file.url }}" target="_blank">🌐</a></td>
+                            <td>{{ file.is_from_zip }}</td>
+                        </tr>
+                        {% endfor %}
                 </table>
             </li>
             <li class="tabcontent" id="param_files">
@@ -133,6 +171,28 @@
         document.getElementById(tabTitle).style.display = "block";
         evt.currentTarget.className += " is-active";
     }
+
+    $(document).ready(function() {
+        $('#all_files_tables_for_specific_dataset').DataTable({
+            "order": [
+                [1, 'desc']
+            ],
+            autoWidth: false,
+            orderClasses: false,
+
+        });
+    });
+
+    $(document).ready(function() {
+        $('#top_files_tables_for_specific_dataset').DataTable({
+            "order": [
+                [1, 'desc']
+            ],
+            autoWidth: false,
+            orderClasses: false,
+
+        });
+    });
 
 </script>
 

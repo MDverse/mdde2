@@ -14,6 +14,7 @@ from queries import (
     get_file_type_stats,
     get_gro_files_info,
     get_mdp_files_info,
+    get_all_files_from_dataset,
 )
 
 app = FastAPI()
@@ -85,6 +86,34 @@ async def dataset_files(request: Request, dataset_id: int):
     dataset = get_dataset_by_id(dataset_id)
     return templates.TemplateResponse(
         "dataset_file_info.html", {"request": request, "dataset": dataset}
+    )
+
+@app.get("/dataset/{dataset_id}/files/all_files", response_class=HTMLResponse)
+async def dataset_files(request: Request, dataset_id: int):
+    files = get_all_files_from_dataset(dataset_id)
+    return templates.TemplateResponse(
+        "dataset_file_info.html", {"request": request, "files": files}
+    )
+
+@app.get("/dataset/{dataset_id}/files/top_files", response_class=HTMLResponse)
+async def dataset_files(request: Request, dataset_id: int):
+    files = get_all_files_from_dataset(dataset_id)
+    return templates.TemplateResponse(
+        "dataset_file_info.html", {"request": request, "files": files}
+    )
+
+@app.get("/dataset/{dataset_id}/files/mdp_files", response_class=HTMLResponse)
+async def dataset_files(request: Request, dataset_id: int):
+
+    return templates.TemplateResponse(
+        "dataset_file_info.html", {"request": request}
+    )
+
+@app.get("/dataset/{dataset_id}/files/traj_files", response_class=HTMLResponse)
+async def dataset_files(request: Request, dataset_id: int):
+
+    return templates.TemplateResponse(
+        "dataset_file_info.html", {"request": request}
     )
 
 
