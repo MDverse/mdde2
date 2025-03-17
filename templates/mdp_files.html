@@ -42,17 +42,17 @@
         </thead>
 
         <tbody>
-        {% for file in mdp_files %}
+        {% for mdp_file in mdp_files %}
             <tr>
-                <td>{{ file.file.dataset.origin.name if file.file.dataset.origin.name else 'N/A' }}</td>
-                <td>{{ file.file.dataset.id_in_origin }}</td>
-                <td class="ellipsis" title="{{ file.file.name }}">{{ file.file.name }}</td>
-                <td>{{ file.dt }}</td>
-                <td>{{ file.nsteps }}</td>
-                <td>{{ file.temperature }}</td>
-                <td>{{ file.thermostat.name }}</td>
-                <td>{{ file.barostat.name }}</td>
-                <td>{{ file.integrator.name }}</td>
+                <td>{{ mdp_file.file.dataset.origin.name if mdp_file.file.dataset.origin.name else 'N/A' }}</td>
+                <td>{{ mdp_file.file.dataset.id_in_origin }}</td>
+                <td class="ellipsis" title="{{ mdp_file.file.name }}">{{ mdp_file.file.name }}</td>
+                <td>{{ mdp_file.dt }}</td>
+                <td>{{ mdp_file.nsteps }}</td>
+                <td>{{ mdp_file.temperature }}</td>
+                <td>{{ mdp_file.thermostat.name }}</td>
+                <td>{{ mdp_file.barostat.name }}</td>
+                <td>{{ mdp_file.integrator.name }}</td>
             </tr>
         {% endfor %}
         </tbody>
