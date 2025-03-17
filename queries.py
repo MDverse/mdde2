@@ -462,7 +462,12 @@ def get_dataset_by_id(dataset_id: int):
 # ============================================================================
 
 def get_gro_files_info() -> list[TopologyFile]:
-    pass
+    statement = select(TopologyFile).options(
+        selectinload(TopologyFile.file)
+    )
+    with Session(engine) as session:
+        results = session.exec(statement).all()
+        return results
 
 # ============================================================================
 # Queries for mdp_files.html

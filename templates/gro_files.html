@@ -6,5 +6,70 @@
 <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
 <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
 
+<!-- Ellisis -->
+<style>
+    .ellipsis {
+        max-width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
 {% endblock %}
 
+{% block main %}
+<section class="section">
+    <h1>GRO files</h1>
+
+    <p>Below is the GRO files summary:</p>
+
+    <table id="GROFilesTable" class="table is-striped is-hoverable" style="width:100%">
+        <thead>
+            <tr>
+                <th>file name</th>
+                <th>atom_number</th>
+                <th>has_protein</th>
+                <th>has_nucleic</th>
+                <th>has_lipid</th>
+                <th>has_glucid</th>
+                <th>has_water_ion</th>
+            </tr>
+        </thead>
+
+        <tbody>
+        {% for file in gro_files %}
+            <tr>
+                <td class="ellipsis" title="{{ file.file.name }}">{{ file.file.name }}</td>
+                <td>{{ file.atom_number }}</td>
+                <td>{{ file.has_protein }}</td>
+                <td>{{ file.has_nucleic }}</td>
+                <td>{{ file.has_lipid }}</td>
+                <td>{{ file.has_glucid }}</td>
+                <td>{{ file.has_water_ion }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}
+
+{% block script_extra %}
+    <script>
+        $(document).ready(function() {
+            $('#GROFilesTable').DataTable({
+                "order": [[2, 'desc']],
+                autoWidth: false,
+                orderClasses: false,
+                columnDefs: [
+                { width: '35%', targets: 0 },    // file name
+                { width: '15%', targets: 1 },    // atom_number
+                { width: '10%', targets: 2 },   // has_protein
+                { width: '10%', targets: 3 },    // has_nucleic
+                { width: '10%', targets: 4 },    // has_lipid
+                { width: '10%', targets: 5 },    // has_glucid
+                { width: '10%', targets: 6 },    // has_water_ion
+            ],
+            });
+        });
+    </script>
+{% endblock %}
