@@ -17,6 +17,7 @@ from db_schema import (
     Keyword,
     ParameterFile,
     TopologyFile,
+    TrajectoryFile,
     engine,
 )
 
@@ -464,6 +465,79 @@ def get_dataset_by_id(dataset_id: int):
         )
         result = session.exec(statement).first()
         return result
+
+
+# ============================================================================
+# Queries for dataset_file_info.html
+# ============================================================================
+
+
+def get_all_files_from_dataset(dataset_id: int) -> list[File]:
+    """
+    Returns a list of all files for a given dataset_id.
+    """
+    with Session(engine) as session:
+        statement = (
+            select(File)
+            .options(
+                selectinload(File.file_type),
+                selectinload(File.dataset),
+            )
+            .where(File.dataset_id == dataset_id)
+        )
+        results = session.exec(statement).all()
+        return results
+
+
+def get_top_files_from_dataset(dataset_id: int) -> list[TopologyFile]:
+    """
+    Returns a list of all topology files for a given dataset_id.
+    """
+    with Session(engine) as session:
+        statement = (
+            select(TopologyFile)
+            .options(
+                selectinload(TopologyFile.file),
+                selectinload(TopologyFile.file).selectinload(File.dataset),
+            )
+            .where(TopologyFile.file.dataset_id == dataset_id)
+        )
+        results = session.exec(statement).all()
+        return results
+
+
+def get_param_files_from_dataset(dataset_id: int) -> list[ParameterFile]:
+    """
+    Returns a list of all parameter files for a given dataset_id.
+    """
+    with Session(engine) as session:
+        statement = (
+            select(ParameterFile)
+            .options(
+                selectinload(ParameterFile.file),
+                selectinload(ParameterFile.file).selectinload(File.dataset),
+            )
+            .where(ParameterFile.file.dataset_id == dataset_id)
+        )
+        results = session.exec(statement).all()
+        return results
+
+
+def get_traj_files_from_dataset(dataset_id: int) -> list[TrajectoryFile]:
+    """
+    Returns a list of all trajectory files for a given dataset_id.
+    """
+    with Session(engine) as session:
+        statement = (
+            select(TrajectoryFile)
+            .options(
+                selectinload(TrajectoryFile.file),
+                selectinload(TrajectoryFile.file).selectinload(File.dataset),
+            )
+            .where(TrajectoryFile.file.dataset_id == dataset_id)
+        )
+        results = session.exec(statement).all()
+        return results
 
 
 # ============================================================================

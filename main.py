@@ -80,16 +80,13 @@ async def get_dataset_info(
     )
 
 
-@app.get("/files_from_dataset/{dataset_id}", response_class=HTMLResponse)
-async def get_files_from_dataset(
-    request: Request,
-    dataset_id: int
-    ):
+@app.get("/dataset/{dataset_id}/files", response_class=HTMLResponse)
+async def dataset_files(request: Request, dataset_id: int):
     dataset = get_dataset_by_id(dataset_id)
     return templates.TemplateResponse(
-        "files_info.html",
-        {"request": request, "dataset": dataset}
+        "dataset_file_info.html", {"request": request, "dataset": dataset}
     )
+
 
 @app.get("/file_types", response_class=HTMLResponse)
 async def gro_files(request: Request):
