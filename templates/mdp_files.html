@@ -2,6 +2,9 @@
 
 {% block head_extra %}
 
+<link href="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.css" rel="stylesheet" integrity="sha384-I4/lBH5Ccr4H+zWkgZKgw+25BTqhOtQ19dxtlM831GM+YFw3OTWq2i12hoyfbfG7" crossorigin="anonymous">
+<script src="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.js" integrity="sha384-tIv+/jMSAROhLvH+FmDUrriZf12whWUskuKSHrpD9poD1Wn5pzQM8PPBeB9qtgtM" crossorigin="anonymous"></script>
+
 <!-- Bokeh CSS + JS -->
 <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
 <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
@@ -60,14 +63,21 @@
                 "order": [[2, 'desc']],
                 autoWidth: false,
                 orderClasses: false,
+                layout: {
+                    topStart: {
+                        searchBuilder: {
+                            columns: [1, 2, 3, 4, 5, 6]
+                        }
+                    }
+                },
                 columnDefs: [
-                { width: '35%', targets: 0 },    // File name
-                { width: '10%', targets: 1 },    // Dt
-                { width: '10%', targets: 2 },   // Nsteps
-                { width: '10%', targets: 3 },    // Temperature
-                { width: '10%', targets: 4 },    // Thermostat
-                { width: '15%', targets: 5 },    // Barostat
-                { width: '10%', targets: 6 },    // Integrator
+                { width: '35%', targets: 0 },    // file name
+                { width: '10%', targets: 1 },    // dt
+                { width: '10%', targets: 2 },    // nsteps
+                { width: '10%', targets: 3 },    // temperature
+                { width: '10%', targets: 4 },    // thermostat
+                { width: '15%', targets: 5 },    // barostat
+                { width: '10%', targets: 6 },    // integrator
             ],
             });
         });
