@@ -486,7 +486,9 @@ def get_mdp_files_info() -> list[ParameterFile]:
         statement = (
             select(ParameterFile)
             .options(
-                selectinload(ParameterFile.file),
+                selectinload(ParameterFile.file)
+                    .selectinload(File.dataset)
+                    .selectinload(Dataset.origin),
                 selectinload(ParameterFile.barostat),
                 selectinload(ParameterFile.integrator),
                 selectinload(ParameterFile.thermostat),

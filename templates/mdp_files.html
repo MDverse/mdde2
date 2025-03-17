@@ -29,6 +29,8 @@
     <table id="MDPFilesTable" class="table is-striped is-hoverable" style="width:100%">
         <thead>
             <tr>
+                <th>dataset origin</th>
+                <th>dataset id</th>
                 <th>file name</th>
                 <th>dt</th>
                 <th>nsteps</th>
@@ -42,6 +44,8 @@
         <tbody>
         {% for file in mdp_files %}
             <tr>
+                <td>{{ file.file.dataset.origin.name if file.file.dataset.origin.name else 'N/A' }}</td>
+                <td>{{ file.file.dataset.id_in_origin }}</td>
                 <td class="ellipsis" title="{{ file.file.name }}">{{ file.file.name }}</td>
                 <td>{{ file.dt }}</td>
                 <td>{{ file.nsteps }}</td>
@@ -66,18 +70,20 @@
                 layout: {
                     topStart: {
                         searchBuilder: {
-                            columns: [1, 2, 3, 4, 5, 6]
+                            // columns: [1, 2, 3, 4, 5, 6]
                         }
                     }
                 },
                 columnDefs: [
-                { width: '35%', targets: 0 },    // file name
-                { width: '10%', targets: 1 },    // dt
-                { width: '10%', targets: 2 },    // nsteps
-                { width: '10%', targets: 3 },    // temperature
-                { width: '10%', targets: 4 },    // thermostat
-                { width: '15%', targets: 5 },    // barostat
-                { width: '10%', targets: 6 },    // integrator
+                { width: '11%', targets: 0 },    // datset origin
+                { width: '11%', targets: 1 },    // dataset id
+                { width: '19%', targets: 2 },    // file name
+                { width: '8%', targets: 3 },    // dt
+                { width: '10%', targets: 4 },    // nsteps
+                { width: '8%', targets: 5 },    // temperature
+                { width: '10%', targets: 6 },    // thermostat
+                { width: '15%', targets: 7 },    // barostat
+                { width: '8%', targets: 8 },    // integrator
             ],
             });
         });
