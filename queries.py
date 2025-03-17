@@ -88,25 +88,29 @@ def get_dataset_origin_summary():
 
         datasets_stats_total_count = {
             "Number of datasets": "{:,}".format(sum(
-                row.number_of_datasets for row in datasets_stats_results
-                )),
-            "First dataset": "nan",
-            "Last dataset": "nan",
+            row.number_of_datasets for row in datasets_stats_results
+            )),
+            "First dataset": min(
+            row.first_dataset for row in datasets_stats_results
+            ) if any(row.first_dataset for row in datasets_stats_results) else None,
+            "Last dataset": max(
+            row.last_dataset for row in datasets_stats_results
+            ) if any(row.last_dataset for row in datasets_stats_results) else None,
             "Non-zip files": "{:,}".format(sum(
-                row.non_zip_files for row in datasets_stats_results
-                )),
+            row.non_zip_files for row in datasets_stats_results
+            )),
             "Zip files": "{:,}".format(sum(
-                row.zip_files for row in datasets_stats_results
-                )),
+            row.zip_files for row in datasets_stats_results
+            )),
             "Files in zip files": "{:,}".format(sum(
-                row.files_within_zip_files for row in datasets_stats_results
-                )),
+            row.files_within_zip_files for row in datasets_stats_results
+            )),
             "Total files": "{:,}".format(sum(
-                row.total_files for row in datasets_stats_results
-                )),
+            row.total_files for row in datasets_stats_results
+            )),
             "Total size in GB for non-zip and zip files ": "{:,.0f}".format(sum(
-                row.total_size_in_GB_non_zip_and_zip_files for row in datasets_stats_results
-                )),
+            row.total_size_in_GB_non_zip_and_zip_files for row in datasets_stats_results
+            )),
         }
 
         return datasets_stats_results, datasets_stats_total_count
@@ -163,6 +167,7 @@ def get_titles():
         statement = select(Dataset.title)
         titles = session.exec(statement).all()
     return titles
+
 
 def generate_title_wordcloud():
     wordcloud_path = Path("static/wordcloud.png")
