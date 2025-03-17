@@ -268,6 +268,8 @@ def create_files_plot():
         background_fill_color="#fafafa",
     )
 
+    p.toolbar.active_drag = None
+
     p.vbar_stack(
         stackers=repositories,
         x='year',
@@ -342,6 +344,8 @@ def create_datasets_plot():
         ],
         background_fill_color="#fafafa",
     )
+
+    p.toolbar.active_drag = None
 
     p.vbar_stack(
         stackers=repositories,
