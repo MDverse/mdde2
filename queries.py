@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 from sqlalchemy import extract, func
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 from sqlmodel import Session, select
 from wordcloud import STOPWORDS, WordCloud
 
@@ -467,7 +467,9 @@ def get_dataset_by_id(dataset_id: int):
 
 def get_gro_files_info() -> list[TopologyFile]:
     statement = select(TopologyFile).options(
-        selectinload(TopologyFile.file)
+        joinedload(TopologyFile.file)
+            .joinedload(File.dataset)
+            .joinedload(Dataset.origin),
     )
     with Session(engine) as session:
         results = session.exec(statement).all()
@@ -486,12 +488,12 @@ def get_mdp_files_info() -> list[ParameterFile]:
         statement = (
             select(ParameterFile)
             .options(
-                selectinload(ParameterFile.file)
-                    .selectinload(File.dataset)
-                    .selectinload(Dataset.origin),
-                selectinload(ParameterFile.barostat),
-                selectinload(ParameterFile.integrator),
-                selectinload(ParameterFile.thermostat),
+                joinedload(ParameterFile.file)
+                    .joinedload(File.dataset)
+                    .joinedload(Dataset.origin),
+                joinedload(ParameterFile.barostat),
+                joinedload(ParameterFile.integrator),
+                joinedload(ParameterFile.thermostat),
             )
         )
         results = session.exec(statement).all()
