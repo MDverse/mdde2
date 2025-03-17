@@ -77,6 +77,18 @@ async def get_dataset_info(
         {"request": request, "dataset": dataset}
     )
 
+
+@app.get("/files_from_dataset/{dataset_id}")
+async def get_files_from_dataset(
+    request: Request,
+    dataset_id: int
+    ):
+    dataset = get_dataset_by_id(dataset_id)
+    return templates.TemplateResponse(
+        "files_info.html",
+        {"request": request, "dataset": dataset}
+    )
+
 @app.get("/file_types")
 async def gro_files(request: Request):
     file_type_stats_summary = get_file_type_stats()
@@ -90,7 +102,14 @@ async def gro_files(request: Request):
 
 @app.get("/gro_files")
 async def gro_files(request: Request):
-    return templates.TemplateResponse("gro_files.html", {"request": request})
+    gro_files = get_gro_files_info()
+    return templates.TemplateResponse(
+        "gro_files.html",
+        {
+            "request": request,
+            "gro_files": gro_files,
+        }
+    )
 
 @app.get("/mdp_files")
 async def mdp_files(request: Request):
