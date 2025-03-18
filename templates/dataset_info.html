@@ -49,17 +49,29 @@
         <div class="content">
             <p class="title is-5">Additional information</p>
             <ul>
-                <li>Number of files: {{ dataset.file_number }} <a href="/dataset/{{ dataset.dataset_id }}/files">See details</a></li>
+                <li>Number of files: {{ dataset.file_number }} <a href="/dataset/{{ dataset.dataset_id }}/files">See
+                        details</a></li>
                 <li>Number of downloads: {{ dataset.download_number }}</li>
                 <li>Number of views: {{ dataset.view_number }}</li>
             </ul>
         </div>
     </div>
     <footer class="card-footer">
-        <p class="card-footer-item">Date created:<strong>{{ dataset.date_created }}</strong></p>
-
-        <p class="card-footer-item">Date last modified:<strong>{{ dataset.date_last_modified }}</strong></p>
-
-        <p class="card-footer-item">Date last crawled:<strong>{{ dataset.date_last_crawled }}</strong></p>
+        <p class="card-footer-item pt-5">
+            <span>
+                Date created: <strong>{{ dataset.date_created }}</strong>
+            </span>
+        </p>
+        <p class="card-footer-item pt-5">
+            <span>
+                Date last modified: <strong>{{ dataset.date_last_modified }}</strong>
+            </span>
+        </p>
+        <p class="card-footer-item pt-5">
+            <span>
+                Date last crawled: <strong>{{ dataset.date_last_crawled }}</strong>
+            </span>
+        </p>
+        <p></p>
     </footer>
 </div>
