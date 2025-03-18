@@ -9,13 +9,13 @@ from queries import (
     create_files_plot,
     generate_title_wordcloud,
     get_all_datasets,
-    get_dataset_by_id,
+    get_dataset_info_by_id,
     get_dataset_origin_summary,
     get_file_type_stats,
-    get_gro_files_info,
-    get_mdp_files_info,
     get_all_files_from_dataset,
-    get_top_files_from_dataset,
+    get_param_files,
+    get_traj_files_from_dataset,
+    get_top_files,
 )
 
 app = FastAPI()
@@ -75,7 +75,7 @@ async def get_dataset_info(
     request: Request,
     dataset_id: int
     ):
-    dataset = get_dataset_by_id(dataset_id)
+    dataset, _ = get_dataset_info_by_id(dataset_id)
     return templates.TemplateResponse(
         "dataset_info.html",
         {"request": request, "dataset": dataset}
@@ -89,39 +89,42 @@ async def get_dataset_info(
 
 @app.get("/dataset/{dataset_id}/files", response_class=HTMLResponse)
 async def dataset_files(request: Request, dataset_id: int):
-    dataset = get_dataset_by_id(dataset_id)
+    dataset, files = get_dataset_info_by_id(dataset_id)
     return templates.TemplateResponse(
-        "dataset_file_info.html", {"request": request, "dataset": dataset}
+        "dataset_file_info.html", {"request": request, "dataset": dataset, "files": files}
     )
 
 
 @app.get("/dataset/{dataset_id}/files/all_files", response_class=HTMLResponse)
 async def dataset_all_files(request: Request, dataset_id: int):
     all_files = get_all_files_from_dataset(dataset_id)
-    dataset = get_dataset_by_id(dataset_id)
-    return templates.TemplateResponse("file_table_template.html", {"request": request, "dataset": dataset, "all_files": all_files})
+    return templates.TemplateResponse(
+        "file_table_template.html", {"request": request, "all_files": all_files}
+        )
 
 
 @app.get("/dataset/{dataset_id}/files/top_files", response_class=HTMLResponse)
 async def dataset_top_files(request: Request, dataset_id: int):
-    top_files = get_top_files_from_dataset(dataset_id)
-    return templates.TemplateResponse("dataset_file_info.html", {"request": request, "top_files": top_files})
-
-
-@app.get("/dataset/{dataset_id}/files/mdp_files", response_class=HTMLResponse)
-async def dataset_files(request: Request, dataset_id: int):
-
+    top_files = get_top_files(dataset_id)
     return templates.TemplateResponse(
-        "dataset_file_info.html", {"request": request}
-    )
+        "topology_table_template.html", {"request": request, "top_files": top_files}
+        )
 
 
-@app.get("/dataset/{dataset_id}/files/traj_files", response_class=HTMLResponse)
+@app.get("/dataset/{dataset_id}/files/param_files", response_class=HTMLResponse)
 async def dataset_files(request: Request, dataset_id: int):
-
+    param_files = get_param_files(dataset_id)
     return templates.TemplateResponse(
-        "dataset_file_info.html", {"request": request}
-    )
+        "parameter_table_template.html", {"request": request, "param_files": param_files}
+        )
+
+
+# @app.get("/dataset/{dataset_id}/files/traj_files", response_class=HTMLResponse)
+# async def dataset_files(request: Request, dataset_id: int):
+#     traj_files = get_traj_files_from_dataset(dataset_id)
+#     return templates.TemplateResponse(
+#         "trajectory_table_template.html", {"request": request, "traj_files": traj_files}
+#     )
 
 
 
@@ -142,7 +145,7 @@ async def gro_files(request: Request):
 
 @app.get("/gro_files", response_class=HTMLResponse)
 async def gro_files(request: Request):
-    gro_files = get_gro_files_info()
+    gro_files = get_top_files()
     return templates.TemplateResponse(
         "gro_files.html",
         {
@@ -153,7 +156,7 @@ async def gro_files(request: Request):
 
 @app.get("/mdp_files", response_class=HTMLResponse)
 async def mdp_files(request: Request):
-    mdp_files = get_mdp_files_info()
+    mdp_files = get_param_files()
     return templates.TemplateResponse(
         "mdp_files.html",
         {

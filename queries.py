@@ -7,6 +7,7 @@ from sqlalchemy import extract, func
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select
 from wordcloud import STOPWORDS, WordCloud
+from typing import Optional
 
 from db_schema import (
     Dataset,
@@ -116,52 +117,6 @@ def get_dataset_origin_summary():
 
         return datasets_stats_results, datasets_stats_total_count
 
-
-# def get_keywords():
-#     with Session(engine) as session:
-#         statement = (
-#             select(Keyword.entry)
-#             .join(DatasetKeywordLink)
-#         )
-
-#         keywords = session.exec(statement).all()
-#     return keywords
-
-
-# def generate_keyword_wordcloud():
-#     wordcloud_path = Path("static/wordcloud.png")
-
-#     # Check if the file already exists
-#     if wordcloud_path.exists():
-#         print("Wordcloud already exists, skipping generation.")
-#         return
-
-#     # Retrieve keywords using the query function
-#     keywords = get_keywords()  # e.g. ['molecule', 'simulation', 'protein', ...]
-
-#     # Join all keywords into a single string (space separated)
-#     text = " ".join(keywords)
-
-#     # Define custom stopwords to remove unwanted words
-#     custom_stopwords = set(STOPWORDS)
-#     custom_stopwords.update(["none"])
-
-#     # Create the WordCloud object
-#     wordcloud = WordCloud(
-#         width=1600,
-#         height=800,
-#         background_color="white",
-#         stopwords=custom_stopwords
-#     ).generate(text)
-
-#     # Create the figure
-#     plt.figure(figsize=(10, 5))
-#     plt.imshow(wordcloud, interpolation="bilinear")
-#     plt.axis("off")
-
-#     # Save the wordcloud image
-#     plt.savefig(wordcloud_path, dpi=500, bbox_inches="tight")
-#     print(f"Wordcloud saved as {wordcloud_path}")
 
 def get_titles():
     with Session(engine) as session:
@@ -447,12 +402,12 @@ def get_all_datasets() -> list[Dataset]:
         return results
 
 
-def get_dataset_by_id(dataset_id: int):
+def get_dataset_info_by_id(dataset_id: int):
     """
     Returns dataset from its id.
     """
     with Session(engine) as session:
-        statement = (
+        statement_dataset = (
             select(Dataset)
             .options(
                 # Load the related origin object so that dataset.origin is available.
@@ -463,8 +418,23 @@ def get_dataset_by_id(dataset_id: int):
             )
             .where(Dataset.dataset_id == dataset_id)
         )
-        result = session.exec(statement).first()
-        return result
+
+        # Count how many total files, topology, parameter, and
+        # trajectory files are in the dataset
+        statement_files = (
+            select(
+            func.count(File.file_id).label("total_files"),
+            func.count(File.file_id).filter(FileType.name == "gro").label("total_topology_files"),
+            func.count(File.file_id).filter(FileType.name == "mdp").label("total_parameter_files"),
+            func.count(File.file_id).filter(FileType.name == "xtc").label("total_trajectory_files"),
+            )
+            .join(FileType, File.file_type_id == FileType.file_type_id)
+            .where(File.dataset_id == dataset_id)
+        )
+
+        result_dataset = session.exec(statement_dataset).first()
+        result_files = session.exec(statement_files).first()
+        return result_dataset, result_files
 
 
 # ============================================================================
@@ -489,24 +459,54 @@ def get_all_files_from_dataset(dataset_id: int) -> list[File]:
         return results
 
 
-def get_top_files_from_dataset(dataset_id: int) -> list[TopologyFile]:
+def get_top_files(dataset_id: Optional[int] = None) -> list[TopologyFile]:
     """
-    Returns a list of all topology files for a given dataset_id.
+    Returns a list of topology files with their related File, Dataset, and Dataset.origin info.
+    
+    If a dataset_id is provided, only topology files for that dataset are returned.
+    Otherwise, all topology files are returned.
     """
+    statement = select(TopologyFile).options(
+        selectinload(TopologyFile.file)
+            .selectinload(File.dataset)
+            .selectinload(Dataset.origin)
+    )
+    
+    if dataset_id is not None:
+        statement = statement.where(TopologyFile.file.has(File.dataset_id == dataset_id))
+    
     with Session(engine) as session:
-        statement = (
-            select(TopologyFile)
-            .options(
-                selectinload(TopologyFile.file),
-                selectinload(TopologyFile.file).selectinload(File.dataset),
-            )
-            .where(TopologyFile.file.dataset_id == dataset_id)
-        )
         results = session.exec(statement).all()
         return results
 
 
-def get_param_files_from_dataset(dataset_id: int) -> list[ParameterFile]:
+def get_param_files(dataset_id: Optional[int] = None) -> list[ParameterFile]:
+    """
+    Returns a list of all parameter files with their related File, Dataset, and Dataset.origin info,
+    as well as related Barostat, Integrator, and Thermostat info.
+    
+    If a dataset_id is provided, only parameter files for that dataset are returned.
+    """
+    statement = (
+        select(ParameterFile)
+        .options(
+            selectinload(ParameterFile.file)
+                .selectinload(File.dataset)
+                .selectinload(Dataset.origin),
+            selectinload(ParameterFile.barostat),
+            selectinload(ParameterFile.integrator),
+            selectinload(ParameterFile.thermostat),
+        )
+    )
+    
+    if dataset_id is not None:
+        # Filter based on the dataset_id from the related File.
+        statement = statement.where(ParameterFile.file.has(File.dataset_id == dataset_id))
+    
+    with Session(engine) as session:
+        results = session.exec(statement).all()
+        return results
+
     """
     Returns a list of all parameter files for a given dataset_id.
     """
@@ -517,7 +517,7 @@ def get_param_files_from_dataset(dataset_id: int) -> list[ParameterFile]:
                 selectinload(ParameterFile.file),
                 selectinload(ParameterFile.file).selectinload(File.dataset),
             )
-            .where(ParameterFile.file.dataset_id == dataset_id)
+            .where(ParameterFile.file.has(File.dataset_id == dataset_id))
         )
         results = session.exec(statement).all()
         return results
@@ -534,46 +534,7 @@ def get_traj_files_from_dataset(dataset_id: int) -> list[TrajectoryFile]:
                 selectinload(TrajectoryFile.file),
                 selectinload(TrajectoryFile.file).selectinload(File.dataset),
             )
-            .where(TrajectoryFile.file.dataset_id == dataset_id)
-        )
-        results = session.exec(statement).all()
-        return results
-
-
-# ============================================================================
-# Queries for gro_files.html
-# ============================================================================
-
-def get_gro_files_info() -> list[TopologyFile]:
-    statement = select(TopologyFile).options(
-        selectinload(TopologyFile.file)
-            .selectinload(File.dataset)
-            .selectinload(Dataset.origin),
-    )
-    with Session(engine) as session:
-        results = session.exec(statement).all()
-        return results
-
-# ============================================================================
-# Queries for mdp_files.html
-# ============================================================================
-
-def get_mdp_files_info() -> list[ParameterFile]:
-    """
-    Returns a list of all parameter files. The relationships to the tables
-    Barostat, Integrator, and Thermostat are loaded as well.
-    """
-    with Session(engine) as session:
-        statement = (
-            select(ParameterFile)
-            .options(
-                selectinload(ParameterFile.file)
-                    .selectinload(File.dataset)
-                    .selectinload(Dataset.origin),
-                selectinload(ParameterFile.barostat),
-                selectinload(ParameterFile.integrator),
-                selectinload(ParameterFile.thermostat),
-            )
+            .where(TrajectoryFile.file.has(File.dataset_id == dataset_id))
         )
         results = session.exec(statement).all()
         return results

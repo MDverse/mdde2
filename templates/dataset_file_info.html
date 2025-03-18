@@ -4,7 +4,9 @@
 
 <!-- HTMX -->
 <!-- https://htmx.org/ -->
-<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/htmx.org@2.0.4"
+    integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
+    crossorigin="anonymous"></script>
 
 
 <!-- Extra CSS for Tabs -->
@@ -36,20 +38,30 @@
         {% endif %}
     </p>
 
-    <div class="content">
-        <p class="title is-5">General information</p>
-        <ul>
-            <li>Origin: {{ dataset.origin.name if dataset.origin else 'N/A' }}</li>
-            <li>ID in origin: {{ dataset.id_in_origin }}</li>
-            <li>Licence: {{ dataset.license }}</li>
-            <li>DOI: <a href="https://doi.org/{{ dataset.doi }}" target="_blank">{{ dataset.doi }}</a></li>
-            <li>URL: <a href="{{ dataset.url }}" target="_blank">{{ dataset.url }}</a></li>
-        </ul>
+
+    <div class="columns">
+        <div class="column">
+            <p class="title is-5">General information</p>
+            <ul>
+                <li>Origin: {{ dataset.origin.name if dataset.origin else 'N/A' }}</li>
+                <li>ID in origin: {{ dataset.id_in_origin }}</li>
+                <li>Licence: {{ dataset.license }}</li>
+                <li>DOI: <a href="https://doi.org/{{ dataset.doi }}" target="_blank">{{ dataset.doi }}</a></li>
+                <li>URL: <a href="{{ dataset.url }}" target="_blank">{{ dataset.url }}</a></li>
+            </ul>
+        </div>
+        <div class="column">
+            <p class="title is-5">Additional information</p>
+            <ul>
+                <li>Number of files: {{ dataset.file_number }}</li>
+                <li>Number of downloads: {{ dataset.download_number }}</li>
+                <li>Number of views: {{ dataset.view_number }}</li>
+            </ul>
+        </div>
+
     </div>
-    <div class="content">
-        <p class="title is-5">Description</p>
-        <p>{{ dataset.description }}</p>
-    </div>
+    <p class="title is-5">Description</p>
+    <p>{{ dataset.description }}</p>
 
 
     <p class="title is-5">Keywords</p>
@@ -61,64 +73,59 @@
         N/A
         {% endif %}
     </p>
+
     </div>
+
+
 
     <hr class="bd-hr">
 
 
     <div class="tabs is-toggle is-fullwidth">
         <ul>
-            <li class="tablinks is-active" data-tab="all_files" 
-                hx-get="/dataset/{{ dataset.dataset_id }}/files/all_files" 
-                hx-trigger="load once" 
-                hx-target="#all_files_tables_for_specific_dataset">
-                <a onclick="openTab(event, 'all_files')">All files</a>
+            <li class="tablinks" data-tab="all_files" hx-get="/dataset/{{ dataset.dataset_id }}/files/all_files"
+                hx-trigger="click once" hx-target="#all_files_tables_for_specific_dataset">
+                <a onclick="openTab(event, 'all_files')">All files ({{files.total_files}})</a>
             </li>
-            <li class="tablinks" data-tab="top_files" 
-                hx-get="/dataset/{{ dataset.dataset_id }}/files/top_files" 
-                hx-trigger="click once" 
-                hx-target="#top_files_tables_for_specific_dataset">
-                <a onclick="openTab(event, 'top_files')">Topology files</a>
+            <li class="tablinks" data-tab="top_files" hx-get="/dataset/{{ dataset.dataset_id }}/files/top_files"
+                hx-trigger="click once" hx-target="#top_files_tables_for_specific_dataset">
+                <a onclick="openTab(event, 'top_files')">Topology files ({{files.total_topology_files}})</a>
             </li>
-            <li class="tablinks" data-tab="param_files" 
-                hx-get="/dataset/{{ dataset.dataset_id }}/files/param_files" 
-                hx-trigger="click once" 
-                hx-target="#param_files_tables_for_specific_dataset">
-                <a onclick="openTab(event, 'param_files')">Parameter files</a>
+            <li class="tablinks" data-tab="param_files" hx-get="/dataset/{{ dataset.dataset_id }}/files/param_files"
+                hx-trigger="click once" hx-target="#param_files_tables_for_specific_dataset">
+                <a onclick="openTab(event, 'param_files')">Parameter files ({{files.total_parameter_files}})</a>
             </li>
-            <li class="tablinks" data-tab="traj_files" 
-                hx-get="/dataset/{{ dataset.dataset_id }}/files/traj_files" 
-                hx-trigger="click once" 
-                hx-target="#traj_files_tables_for_specific_dataset">
-                <a onclick="openTab(event, 'traj_files')">Trajectory files</a>
+            <li class="tablinks" data-tab="traj_files" hx-get="/dataset/{{ dataset.dataset_id }}/files/traj_files"
+                hx-trigger="click once" hx-target="#traj_files_tables_for_specific_dataset">
+                <a onclick="openTab(event, 'traj_files')">Trajectory files ({{files.total_trajectory_files}})</a>
             </li>
         </ul>
     </div>
 
     <div>
         <ul>
-            <li class="tabcontent is-active" id="all_files">
+            <li class="tabcontent" id="all_files">
                 <!-- The "all_files" content will be loaded via htmx once and then toggled -->
                 <h3 class="title is-spaced">Table containing all the files associated with the dataset</h3>
-                    <table id="all_files_tables_for_specific_dataset">
-                        
-                    </table>
+                <table class="table is-striped is-hoverable" id="all_files_tables_for_specific_dataset">
+                    <!-- Content loaded by htmx on page load -->
+                </table>
             </li>
             <li class="tabcontent" id="top_files" style="display: none;">
                 <h3 class="title is-spaced">Table with all the topology files associated with the dataset</h3>
-                <table id="top_files_tables_for_specific_dataset">
+                <table class="table is-striped is-hoverable" id="top_files_tables_for_specific_dataset">
                     <!-- Content loaded by htmx on first click -->
                 </table>
             </li>
             <li class="tabcontent" id="param_files" style="display: none;">
                 <h3 class="title is-spaced">Table with all the parameter files associated with the dataset</h3>
-                <table id="param_files_tables_for_specific_dataset">
+                <table class="table is-striped is-hoverable" id="param_files_tables_for_specific_dataset">
                     <!-- Content loaded by htmx on first click -->
                 </table>
             </li>
             <li class="tabcontent" id="traj_files" style="display: none;">
                 <h3 class="title is-spaced">Table with all the trajectory files associated with the dataset</h3>
-                <table id="traj_files_tables_for_specific_dataset">
+                <table class="table is-striped is-hoverable" id="traj_files_tables_for_specific_dataset">
                     <!-- Content loaded by htmx on first click -->
                 </table>
             </li>
@@ -134,41 +141,48 @@
 
 <script>
     function openTab(evt, tabTitle) {
-    // Hide all tab content elements
-    var tabcontents = document.getElementsByClassName("tabcontent");
-    for (var i = 0; i < tabcontents.length; i++) {
-        tabcontents[i].style.display = "none";
-        tabcontents[i].classList.remove("is-active");
-    }
-    
-    // Remove active class from all tab links
-    var tablinks = document.getElementsByClassName("tablinks");
-    for (var i = 0; i < tablinks.length; i++) {
-        tablinks[i].classList.remove("is-active");
-    }
-    
-    // Show the selected tab content and mark the tab as active
-    document.getElementById(tabTitle).style.display = "block";
-    document.getElementById(tabTitle).classList.add("is-active");
-    evt.currentTarget.parentElement.classList.add("is-active");
+        var tabcontent = document.getElementById(tabTitle);
+        var isActive = tabcontent.classList.contains("is-active");
+
+        // Hide all tab content elements
+        var tabcontents = document.getElementsByClassName("tabcontent");
+        for (var i = 0; i < tabcontents.length; i++) {
+            tabcontents[i].style.display = "none";
+            tabcontents[i].classList.remove("is-active");
+        }
+
+        // Remove active class from all tab links
+        var tablinks = document.getElementsByClassName("tablinks");
+        for (var i = 0; i < tablinks.length; i++) {
+            tablinks[i].classList.remove("is-active");
+        }
+
+        // If the tab was not active, show it and mark it as active
+        if (!isActive) {
+            tabcontent.style.display = "block";
+            tabcontent.classList.add("is-active");
+            evt.currentTarget.parentElement.classList.add("is-active");
+        }
     }
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#all_files_tables_for_specific_dataset').DataTable({
-            "order": [
-                [2, 'desc']
-            ],
             autoWidth: false,
             orderClasses: false,
 
         });
     });
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('#top_files_tables_for_specific_dataset').DataTable({
-            "order": [
-                [1, 'desc']
-            ],
+            autoWidth: false,
+            orderClasses: false,
+
+        });
+    });
+
+    $(document).ready(function () {
+        $('#param_files_tables_for_specific_dataset').DataTable({
             autoWidth: false,
             orderClasses: false,
 

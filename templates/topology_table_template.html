@@ -1,0 +1,31 @@
+<!-- templates/topology_table_template.html -->
+
+<thead>
+    <tr>
+        <th>dataset origin</th>
+        <th>dataset id</th>
+        <th>file name</th>
+        <th class="has-text-left">atom_number</th>
+        <th>has_protein</th>
+        <th>has_nucleic</th>
+        <th>has_lipid</th>
+        <th>has_glucid</th>
+        <th>has_water_ion</th>
+    </tr>
+</thead>
+
+<tbody>
+    {% for top_file in top_files %}
+    <tr>
+        <td>{{ top_file.file.dataset.origin.name if top_file.file.dataset.origin.name else 'N/A' }}</td>
+        <td>{{ top_file.file.dataset.id_in_origin }}</td>
+        <td class="ellipsis" title="{{ top_file.file.name }}">{{ top_file.file.name }}</td>
+        <td class="has-text-left">{{ "{:,.0f}".format(top_file.atom_number) }}</td>
+        <td>{{ top_file.has_protein }}</td>
+        <td>{{ top_file.has_nucleic }}</td>
+        <td>{{ top_file.has_lipid }}</td>
+        <td>{{ top_file.has_glucid }}</td>
+        <td>{{ top_file.has_water_ion }}</td>
+    </tr>
+    {% endfor %}
+</tbody>

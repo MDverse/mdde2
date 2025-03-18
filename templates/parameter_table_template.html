@@ -1,0 +1,32 @@
+<!-- templates/parameter_table_template.html -->
+<table>
+    <thead>
+        <tr>
+            <th>dataset origin</th>
+            <th>dataset id</th>
+            <th>file name</th>
+            <th>dt</th>
+            <th>nsteps</th>
+            <th>temperature</th>
+            <th>thermostat</th>
+            <th>barostat</th>
+            <th>integrator</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for param_file in param_files %}
+        <tr>
+            <td>{{ param_file.file.dataset.origin.name if param_file.file.dataset.origin.name else 'N/A' }}</td>
+            <td>{{ param_file.file.dataset.id_in_origin }}</td>
+            <td class="ellipsis" title="{{ param_file.file.name }}">{{ param_file.file.name }}</td>
+            <td>{{ param_file.dt }}</td>
+            <td>{{ param_file.nsteps }}</td>
+            <td>{{ param_file.temperature }}</td>
+            <td>{{ param_file.thermostat.name }}</td>
+            <td>{{ param_file.barostat.name }}</td>
+            <td>{{ param_file.integrator.name }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
