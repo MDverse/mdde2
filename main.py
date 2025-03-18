@@ -15,6 +15,7 @@ from queries import (
     get_gro_files_info,
     get_mdp_files_info,
     get_all_files_from_dataset,
+    get_top_files_from_dataset,
 )
 
 app = FastAPI()
@@ -81,6 +82,11 @@ async def get_dataset_info(
     )
 
 
+
+
+
+
+
 @app.get("/dataset/{dataset_id}/files", response_class=HTMLResponse)
 async def dataset_files(request: Request, dataset_id: int):
     dataset = get_dataset_by_id(dataset_id)
@@ -88,19 +94,19 @@ async def dataset_files(request: Request, dataset_id: int):
         "dataset_file_info.html", {"request": request, "dataset": dataset}
     )
 
+
 @app.get("/dataset/{dataset_id}/files/all_files", response_class=HTMLResponse)
-async def dataset_files(request: Request, dataset_id: int):
-    files = get_all_files_from_dataset(dataset_id)
-    return templates.TemplateResponse(
-        "dataset_file_info.html", {"request": request, "files": files}
-    )
+async def dataset_all_files(request: Request, dataset_id: int):
+    all_files = get_all_files_from_dataset(dataset_id)
+    dataset = get_dataset_by_id(dataset_id)
+    return templates.TemplateResponse("file_table_template.html", {"request": request, "dataset": dataset, "all_files": all_files})
+
 
 @app.get("/dataset/{dataset_id}/files/top_files", response_class=HTMLResponse)
-async def dataset_files(request: Request, dataset_id: int):
-    files = get_all_files_from_dataset(dataset_id)
-    return templates.TemplateResponse(
-        "dataset_file_info.html", {"request": request, "files": files}
-    )
+async def dataset_top_files(request: Request, dataset_id: int):
+    top_files = get_top_files_from_dataset(dataset_id)
+    return templates.TemplateResponse("dataset_file_info.html", {"request": request, "top_files": top_files})
+
 
 @app.get("/dataset/{dataset_id}/files/mdp_files", response_class=HTMLResponse)
 async def dataset_files(request: Request, dataset_id: int):
@@ -109,12 +115,18 @@ async def dataset_files(request: Request, dataset_id: int):
         "dataset_file_info.html", {"request": request}
     )
 
+
 @app.get("/dataset/{dataset_id}/files/traj_files", response_class=HTMLResponse)
 async def dataset_files(request: Request, dataset_id: int):
 
     return templates.TemplateResponse(
         "dataset_file_info.html", {"request": request}
     )
+
+
+
+
+
 
 
 @app.get("/file_types", response_class=HTMLResponse)

@@ -68,16 +68,28 @@
 
     <div class="tabs is-toggle is-fullwidth">
         <ul>
-            <li class="is-active" id="tablinks" hx-trigger="click" hx-get="/dataset/{{ dataset.dataset_id }}/files/all_files" hx-swap="innerHTML" hx-target="#all_files_tables_for_specific_dataset">
+            <li class="tablinks is-active" data-tab="all_files" 
+                hx-get="/dataset/{{ dataset.dataset_id }}/files/all_files" 
+                hx-trigger="load once" 
+                hx-target="#all_files_tables_for_specific_dataset">
                 <a onclick="openTab(event, 'all_files')">All files</a>
             </li>
-            <li id="tablinks">
+            <li class="tablinks" data-tab="top_files" 
+                hx-get="/dataset/{{ dataset.dataset_id }}/files/top_files" 
+                hx-trigger="click once" 
+                hx-target="#top_files_tables_for_specific_dataset">
                 <a onclick="openTab(event, 'top_files')">Topology files</a>
             </li>
-            <li id="tablinks">
+            <li class="tablinks" data-tab="param_files" 
+                hx-get="/dataset/{{ dataset.dataset_id }}/files/param_files" 
+                hx-trigger="click once" 
+                hx-target="#param_files_tables_for_specific_dataset">
                 <a onclick="openTab(event, 'param_files')">Parameter files</a>
             </li>
-            <li id="tablinks">
+            <li class="tablinks" data-tab="traj_files" 
+                hx-get="/dataset/{{ dataset.dataset_id }}/files/traj_files" 
+                hx-trigger="click once" 
+                hx-target="#traj_files_tables_for_specific_dataset">
                 <a onclick="openTab(event, 'traj_files')">Trajectory files</a>
             </li>
         </ul>
@@ -86,65 +98,28 @@
     <div>
         <ul>
             <li class="tabcontent is-active" id="all_files">
+                <!-- The "all_files" content will be loaded via htmx once and then toggled -->
                 <h3 class="title is-spaced">Table containing all the files associated with the dataset</h3>
-                <table id="all_files_tables_for_specific_dataset">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Size</th>
-                            <th>URL</th>
-                            <th>Is from zip file ?</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for file in files %}
-                        <tr>
-                            <td>{{ file.name }}</td>
-                            <td>{{ file.type }}</td>
-                            <td>{{ file.size }}</td>
-                            <td><a href="{{ file.url }}" target="_blank">🌐</a></td>
-                            <td>{{ file.is_from_zip }}</td>
-                        </tr>
-                        {% endfor %}
-                </table>
+                    <table id="all_files_tables_for_specific_dataset">
+                        
+                    </table>
             </li>
-            <li class="tabcontent" id="top_files">
+            <li class="tabcontent" id="top_files" style="display: none;">
                 <h3 class="title is-spaced">Table with all the topology files associated with the dataset</h3>
                 <table id="top_files_tables_for_specific_dataset">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Size</th>
-                            <th>URL</th>
-                            <th>Is from zip file ?</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {% for file in files %}
-                        <tr>
-                            <td>{{ file.name }}</td>
-                            <td>{{ file.type }}</td>
-                            <td>{{ file.size }}</td>
-                            <td><a href="{{ file.url }}" target="_blank">🌐</a></td>
-                            <td>{{ file.is_from_zip }}</td>
-                        </tr>
-                        {% endfor %}
+                    <!-- Content loaded by htmx on first click -->
                 </table>
             </li>
-            <li class="tabcontent" id="param_files">
+            <li class="tabcontent" id="param_files" style="display: none;">
                 <h3 class="title is-spaced">Table with all the parameter files associated with the dataset</h3>
                 <table id="param_files_tables_for_specific_dataset">
-
+                    <!-- Content loaded by htmx on first click -->
                 </table>
             </li>
-            <li class="tabcontent" id="traj_files">
+            <li class="tabcontent" id="traj_files" style="display: none;">
                 <h3 class="title is-spaced">Table with all the trajectory files associated with the dataset</h3>
                 <table id="traj_files_tables_for_specific_dataset">
-
+                    <!-- Content loaded by htmx on first click -->
                 </table>
             </li>
         </ul>
@@ -159,23 +134,29 @@
 
 <script>
     function openTab(evt, tabTitle) {
-        var i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" is-active", "");
-        }
-        document.getElementById(tabTitle).style.display = "block";
-        evt.currentTarget.className += " is-active";
+    // Hide all tab content elements
+    var tabcontents = document.getElementsByClassName("tabcontent");
+    for (var i = 0; i < tabcontents.length; i++) {
+        tabcontents[i].style.display = "none";
+        tabcontents[i].classList.remove("is-active");
+    }
+    
+    // Remove active class from all tab links
+    var tablinks = document.getElementsByClassName("tablinks");
+    for (var i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove("is-active");
+    }
+    
+    // Show the selected tab content and mark the tab as active
+    document.getElementById(tabTitle).style.display = "block";
+    document.getElementById(tabTitle).classList.add("is-active");
+    evt.currentTarget.parentElement.classList.add("is-active");
     }
 
     $(document).ready(function() {
         $('#all_files_tables_for_specific_dataset').DataTable({
             "order": [
-                [1, 'desc']
+                [2, 'desc']
             ],
             autoWidth: false,
             orderClasses: false,
