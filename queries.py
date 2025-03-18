@@ -507,34 +507,26 @@ def get_param_files(dataset_id: Optional[int] = None) -> list[ParameterFile]:
         results = session.exec(statement).all()
         return results
 
-    """
-    Returns a list of all parameter files for a given dataset_id.
-    """
-    with Session(engine) as session:
-        statement = (
-            select(ParameterFile)
-            .options(
-                selectinload(ParameterFile.file),
-                selectinload(ParameterFile.file).selectinload(File.dataset),
-            )
-            .where(ParameterFile.file.has(File.dataset_id == dataset_id))
-        )
-        results = session.exec(statement).all()
-        return results
 
-
-def get_traj_files_from_dataset(dataset_id: int) -> list[TrajectoryFile]:
+def get_traj_files(dataset_id: Optional[int] = None) -> list[TrajectoryFile]:
     """
-    Returns a list of all trajectory files for a given dataset_id.
+    Returns a list of all trajectory files with their related File, Dataset, and Dataset.origin info.
+    
+    If a dataset_id is provided, only parameter files for that dataset are returned.
     """
     with Session(engine) as session:
         statement = (
             select(TrajectoryFile)
             .options(
-                selectinload(TrajectoryFile.file),
-                selectinload(TrajectoryFile.file).selectinload(File.dataset),
+                selectinload(TrajectoryFile.file)
+                    .selectinload(File.dataset)
+                    .selectinload(Dataset.origin),
             )
-            .where(TrajectoryFile.file.has(File.dataset_id == dataset_id))
         )
-        results = session.exec(statement).all()
-        return results
+        
+        if dataset_id is not None:
+            statement = statement.where(TrajectoryFile.file.has(File.dataset_id == dataset_id))
+    
+        with Session(engine) as session:
+            results = session.exec(statement).all()
+            return results

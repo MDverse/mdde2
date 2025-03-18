@@ -14,8 +14,8 @@ from queries import (
     get_file_type_stats,
     get_all_files_from_dataset,
     get_param_files,
-    get_traj_files_from_dataset,
     get_top_files,
+    get_traj_files,
 )
 
 app = FastAPI()
@@ -119,12 +119,12 @@ async def dataset_files(request: Request, dataset_id: int):
         )
 
 
-# @app.get("/dataset/{dataset_id}/files/traj_files", response_class=HTMLResponse)
-# async def dataset_files(request: Request, dataset_id: int):
-#     traj_files = get_traj_files_from_dataset(dataset_id)
-#     return templates.TemplateResponse(
-#         "trajectory_table_template.html", {"request": request, "traj_files": traj_files}
-#     )
+@app.get("/dataset/{dataset_id}/files/traj_files", response_class=HTMLResponse)
+async def dataset_files(request: Request, dataset_id: int):
+    traj_files = get_traj_files(dataset_id)
+    return templates.TemplateResponse(
+        "trajectory_table_template.html", {"request": request, "traj_files": traj_files}
+    )
 
 
 
