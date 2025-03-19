@@ -405,6 +405,9 @@ def get_csv_depending_on_type(file_type: str) -> pd.DataFrame:
 
         results = session.exec(statement).all()
 
+        # Here we use the _mapping attribute to convert the results to a list of dictionaries
+        # Normally we would use model_dump() but this doesn't work for SQLModel objects that
+        # have been modified or filtered by columns (e.g. specifying a column, adding a label, etc.)
         data = [dict(row._mapping) for row in results]
         df = pd.DataFrame(data)
 
