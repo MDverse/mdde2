@@ -1,5 +1,5 @@
 from bokeh.embed import components
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,6 +12,7 @@ from queries import (
     get_dataset_info_by_id,
     get_dataset_origin_summary,
     get_file_type_stats,
+    get_csv_depending_on_type,
     get_all_files_from_dataset,
     get_param_files,
     get_top_files,
@@ -142,6 +143,30 @@ async def gro_files(request: Request):
             "file_type_stats_summary": file_type_stats_summary,
         }
     )
+
+
+# Endpoint to render the file type download prompt snippet.
+@app.get("/download_csv/{file_type}", response_class=HTMLResponse)
+async def download_csv_files_for_file_type(request: Request, file_type: str):
+    # Render a snippet with file type info and a download button.
+    return templates.TemplateResponse(
+        "file_type_download_prompt.html",
+        {
+            "request": request,
+            "file_type": file_type,
+        }
+    )
+
+# Endpoint to trigger the CSV file download.
+@app.get("/download_csv_file/{file_type}")
+async def download_csv_file(file_type: str):
+    df = get_csv_depending_on_type(file_type)
+    csv_data = df.to_csv(index=False)
+    headers = {
+        "Content-Disposition": f"attachment; filename={file_type}.csv"
+    }
+    return Response(content=csv_data, media_type="text/csv", headers=headers)
+
 
 @app.get("/gro_files", response_class=HTMLResponse)
 async def gro_files(request: Request):

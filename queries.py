@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pandas as pd
 import matplotlib.pyplot as plt
 from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
@@ -379,6 +380,35 @@ def get_file_type_stats():
 
         return file_type_stats_summary
 
+
+def get_csv_depending_on_type(file_type: str) -> pd.DataFrame:
+    """
+    Returns a DataFrame with all files of a given file type.
+    """
+    with Session(engine) as session:
+        statement = (
+            select(
+                Dataset.id_in_origin.label("dataset_id"),
+                DatasetOrigin.name.label("dataset_origin"),
+                File.name,
+                File.size_in_bytes,
+                File.is_from_zip_file,
+                File.md5,
+                File.url,
+                Dataset.url.label("dataset_url"),
+            )
+            .join(FileType, File.file_type_id == FileType.file_type_id)
+            .join(Dataset, File.dataset_id == Dataset.dataset_id)
+            .join(DatasetOrigin, Dataset.origin_id == DatasetOrigin.origin_id)
+            .where(FileType.name == file_type)
+        )
+
+        results = session.exec(statement).all()
+
+        data = [dict(row._mapping) for row in results]
+        df = pd.DataFrame(data)
+
+        return df
 
 # ============================================================================
 # Queries for search.html
