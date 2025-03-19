@@ -1,8 +1,17 @@
 <!-- templates/trajectory_table_template.html -->
+<style>
+    .ellipsis {
+        max-width: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
 <thead>
     <tr>
         <th>dataset origin</th>
-        <th>dataset id</th>
+        <th class="has-text-left">dataset id</th>
         <th>file name</th>
         <th>atom number</th>
         <th>frame number</th>
@@ -15,8 +24,8 @@
         <td>{{ traj_file.file.dataset.origin.name if traj_file.file.dataset.origin.name else 'N/A' }}</td>
         <td>{{ traj_file.file.dataset.id_in_origin }}</td>
         <td class="ellipsis" title="{{ traj_file.file.name }}">{{ traj_file.file.name }}</td>
-        <td>{{ traj_file.atom_number }}</td>
-        <td>{{ traj_file.frame_number }}</td>
+        <td>{{ "{:,.0f}".format(traj_file.atom_number) }}</td>
+        <td>{{ "{:,.0f}".format(traj_file.frame_number) }}</td>
     </tr>
 {% endfor %}
 </tbody>

@@ -21,7 +21,7 @@
         <td>{{ param_file.file.dataset.id_in_origin }}</td>
         <td class="ellipsis" title="{{ param_file.file.name }}">{{ param_file.file.name }}</td>
         <td>{{ param_file.dt }}</td>
-        <td>{{ param_file.nsteps }}</td>
+        <td>{{ "{:,.0f}".format(param_file.nsteps) }}</td>
         <td>{{ param_file.temperature }}</td>
         <td>{{ param_file.thermostat.name }}</td>
         <td>{{ param_file.barostat.name }}</td>
