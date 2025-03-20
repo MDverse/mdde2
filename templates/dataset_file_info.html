@@ -179,7 +179,16 @@
                 orderClasses: false,
                 columnDefs: [
                     { "visible": true, "targets": [ 2,3,4,5,6,7,8 ] },
-                    { "visible": false, "targets": [ '_all' ] }
+                    { "visible": false, "targets": [ '_all' ] },
+                    { width: '11%', targets: 0 },    // datset origin
+                    { width: '11%', targets: 1 },    // dataset id
+                    { width: '20%', targets: 2 },    // file name
+                    { width: '13%', targets: 3 },    // atom_number
+                    { width: '9%', targets: 4 },   // has_protein
+                    { width: '9%', targets: 5 },    // has_nucleic
+                    { width: '9%', targets: 6 },    // has_lipid
+                    { width: '9%', targets: 7 },    // has_glucid
+                    { width: '9%', targets: 8 },    // has_water_ion
                 ],
             });
         }
@@ -187,7 +196,16 @@
             $('#param_files_tables_for_specific_dataset').DataTable({
                 columnDefs: [
                     { "visible": true, "targets": [ 2,3,4,5,6,7,8 ] },
-                    { "visible": false, "targets": [ '_all' ] }
+                    { "visible": false, "targets": [ '_all' ] },
+                    { width: '11%', targets: 0 },    // datset origin
+                    { width: '11%', targets: 1 },    // dataset id
+                    { width: '19%', targets: 2 },    // file name
+                    { width: '8%', targets: 3 },    // dt
+                    { width: '10%', targets: 4 },    // nsteps
+                    { width: '8%', targets: 5 },    // temperature
+                    { width: '10%', targets: 6 },    // thermostat
+                    { width: '15%', targets: 7 },    // barostat
+                    { width: '8%', targets: 8 },    // integrator
                 ],
             });
         }
