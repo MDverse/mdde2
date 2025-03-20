@@ -7,8 +7,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
-from sqlalchemy import extract, func
-from sqlalchemy.orm import selectinload
+from sqlalchemy import extract, func, case
+from sqlalchemy.orm import selectinload, aliased
 from sqlmodel import Session, select
 from wordcloud import STOPWORDS, WordCloud
 from typing import Optional
@@ -384,36 +384,45 @@ def get_file_type_stats():
         return file_type_stats_summary
 
 
-def get_csv_depending_on_type(file_type: str) -> pd.DataFrame:
+def get_tsv_depending_on_type(file_type: str) -> pd.DataFrame:
     """
     Returns a DataFrame with all files of a given file type.
     """
+    # Create an alias for the parent file
+    ParentFile = aliased(File)
+    
+    # Define a CASE expression: if file is from a zip, then use parent's URL, else use file.url
+    file_url_expr = case(
+        (File.is_from_zip_file == True, ParentFile.url),
+        else_=File.url
+    ).label("file_url")
+
+    
     with Session(engine) as session:
         statement = (
             select(
                 Dataset.id_in_origin.label("dataset_id"),
                 DatasetOrigin.name.label("dataset_origin"),
-                File.name,
-                File.size_in_bytes,
-                File.is_from_zip_file,
-                File.md5,
-                File.url,
+                File.name.label("file_name"),
+                File.size_in_bytes.label("file_size_in_bytes"),
+                File.is_from_zip_file.label("is_file_from_zip_file"),
+                file_url_expr,
                 Dataset.url.label("dataset_url"),
             )
             .join(FileType, File.file_type_id == FileType.file_type_id)
             .join(Dataset, File.dataset_id == Dataset.dataset_id)
             .join(DatasetOrigin, Dataset.origin_id == DatasetOrigin.origin_id)
+            # Left join the parent file so that files from a zip can retrieve the parent URL.
+            .join(ParentFile, File.parent_zip_file_id == ParentFile.file_id, isouter=True)
             .where(FileType.name == file_type)
         )
-
+    
         results = session.exec(statement).all()
-
-        # Here we use the _mapping attribute to convert the results to a list of dictionaries
-        # Normally we would use model_dump() but this doesn't work for SQLModel objects that
-        # have been modified or filtered by columns (e.g. specifying a column, adding a label, etc.)
+    
+        # Convert results to a list of dictionaries then to a DataFrame
         data = [dict(row._mapping) for row in results]
         df = pd.DataFrame(data)
-
+    
         return df
 
 # ============================================================================

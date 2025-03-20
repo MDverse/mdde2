@@ -12,7 +12,7 @@ from queries import (
     get_dataset_info_by_id,
     get_dataset_origin_summary,
     get_file_type_stats,
-    get_csv_depending_on_type,
+    get_tsv_depending_on_type,
     get_all_files_from_dataset,
     get_param_files,
     get_top_files,
@@ -146,8 +146,8 @@ async def gro_files(request: Request):
 
 
 # Endpoint to render the file type download prompt snippet.
-@app.get("/download_csv/{file_type}", response_class=HTMLResponse)
-async def download_csv_files_for_file_type(request: Request, file_type: str):
+@app.get("/download_tsv/{file_type}", response_class=HTMLResponse)
+async def download_tsv_files_for_file_type(request: Request, file_type: str):
     # Render a snippet with file type info and a download button.
     return templates.TemplateResponse(
         "file_type_download_prompt.html",
@@ -158,14 +158,14 @@ async def download_csv_files_for_file_type(request: Request, file_type: str):
     )
 
 # Endpoint to trigger the CSV file download.
-@app.get("/download_csv_file/{file_type}")
-async def download_csv_file(file_type: str):
-    df = get_csv_depending_on_type(file_type)
-    csv_data = df.to_csv(index=False)
+@app.get("/download_tsv_file/{file_type}")
+async def download_tsv_file(file_type: str):
+    df = get_tsv_depending_on_type(file_type)
+    tsv_data = df.to_csv(index=False, sep="\t")
     headers = {
-        "Content-Disposition": f"attachment; filename={file_type}.csv"
+        "Content-Disposition": f"attachment; filename=mdverse_{file_type}.tsv"
     }
-    return Response(content=csv_data, media_type="text/csv", headers=headers)
+    return Response(content=tsv_data, media_type="text/tsv", headers=headers)
 
 
 @app.get("/gro_files", response_class=HTMLResponse)

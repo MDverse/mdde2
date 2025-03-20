@@ -32,7 +32,7 @@
 
         <tbody>
             {% for row in file_type_stats_summary|sort(attribute='number_of_files', reverse=True) %}
-            <tr hx-trigger="click" hx-get="/download_csv/{{ row.file_type }}" hx-swap="innerHTML" hx-target="#file_type_download_prompt">
+            <tr hx-trigger="click" hx-get="/download_tsv/{{ row.file_type }}" hx-swap="innerHTML" hx-target="#file_type_download_prompt">
                 <td>{{ row.file_type }}</td>
                 <td>{{ "{:,}".format(row.number_of_files) }}</td>
                 <td>{{ "{:,}".format(row.number_of_datasets) }}</td>
