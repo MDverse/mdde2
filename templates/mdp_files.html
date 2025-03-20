@@ -5,6 +5,10 @@
 <link href="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.css" rel="stylesheet" integrity="sha384-I4/lBH5Ccr4H+zWkgZKgw+25BTqhOtQ19dxtlM831GM+YFw3OTWq2i12hoyfbfG7" crossorigin="anonymous">
 <script src="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.js" integrity="sha384-tIv+/jMSAROhLvH+FmDUrriZf12whWUskuKSHrpD9poD1Wn5pzQM8PPBeB9qtgtM" crossorigin="anonymous"></script>
 
+<!-- HTMX -->
+<!-- https://htmx.org/ -->
+<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+
 <!-- Ellisis -->
 <style>
     .ellipsis {
@@ -22,46 +26,23 @@
 
     <p>Below is the MDP files summary:</p>
 
-    <table id="MDPFilesTable" class="table is-striped is-hoverable" style="width:100%">
-        <thead>
-            <tr>
-                <th>dataset origin</th>
-                <th>dataset id</th>
-                <th>file name</th>
-                <th>dt</th>
-                <th>nsteps</th>
-                <th>temperature</th>
-                <th>thermostat</th>
-                <th>barostat</th>
-                <th>integrator</th>
-            </tr>
-        </thead>
-
-        <tbody>
-        {% for mdp_file in mdp_files %}
-        <!-- The numerical columns are being inserted as string values. In order to convert them back
-        into numerical values, ve add '|float' to each of them so that we can later
-        order the rows based on those columns-->
-            <tr>
-                <td>{{ mdp_file.file.dataset.origin.name if mdp_file.file.dataset.origin.name else 'N/A' }}</td>
-                <td><a href="{{ mdp_file.file.dataset.url }}">{{ mdp_file.file.dataset.id_in_origin }}</a></td>
-                <td class="ellipsis" title="{{ mdp_file.file.name }}">{{ mdp_file.file.name }}</td>
-                <td>{{ mdp_file.dt|float }}</td>
-                <td>{{ "{:,.0f}".format(mdp_file.nsteps|float) if mdp_file.nsteps|float is not none else 'N/A' }}</td>
-                <td>{{ mdp_file.temperature|float }}</td>
-                <td>{{ mdp_file.thermostat.name }}</td>
-                <td>{{ mdp_file.barostat.name }}</td>
-                <td>{{ mdp_file.integrator.name }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
+    <table id="MDPFilesTable"
+       class="table is-striped is-hoverable"
+       style="width:100%"
+       hx-get="/all_mdp_files_data"
+       hx-trigger="load once"
+       hx-target="#MDPFilesTable">
+       <!-- HTMX content goes here-->
     </table>
+
 </section>
 {% endblock %}
 
 {% block script_extra %}
     <script>
-        $(document).ready(function() {
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            if (evt.detail.target.id === "MDPFilesTable") {
+            // Re-initialize DataTables
             $('#MDPFilesTable').DataTable({
                 autoWidth: false,
                 orderClasses: false,
@@ -73,17 +54,44 @@
                     }
                 },
                 columnDefs: [
-                { width: '11%', targets: 0 },    // datset origin
-                { width: '11%', targets: 1 },    // dataset id
-                { width: '19%', targets: 2 },    // file name
-                { width: '8%', targets: 3 },    // dt
-                { width: '10%', targets: 4 },    // nsteps
-                { width: '8%', targets: 5 },    // temperature
-                { width: '10%', targets: 6 },    // thermostat
-                { width: '15%', targets: 7 },    // barostat
-                { width: '8%', targets: 8 },    // integrator
-            ],
+                    { width: '11%', targets: 0 },    // datset origin
+                    { width: '11%', targets: 1 },    // dataset id
+                    { width: '19%', targets: 2 },    // file name
+                    { width: '8%', targets: 3 },    // dt
+                    { width: '10%', targets: 4 },    // nsteps
+                    { width: '8%', targets: 5 },    // temperature
+                    { width: '10%', targets: 6 },    // thermostat
+                    { width: '15%', targets: 7 },    // barostat
+                    { width: '8%', targets: 8 },    // integrator
+                ],
             });
+            }
         });
+
+        // $(document).ready(function() {
+        //     $('#MDPFilesTable').DataTable({
+        //         autoWidth: false,
+        //         orderClasses: false,
+        //         layout: {
+        //             topStart: {
+        //                 searchBuilder: {
+        //                     // columns: [1, 2, 3, 4, 5, 6]
+        //                 }
+        //             }
+        //         },
+        //         columnDefs: [
+        //             { width: '11%', targets: 0 },    // datset origin
+        //             { width: '11%', targets: 1 },    // dataset id
+        //             { width: '19%', targets: 2 },    // file name
+        //             { width: '8%', targets: 3 },    // dt
+        //             { width: '10%', targets: 4 },    // nsteps
+        //             { width: '8%', targets: 5 },    // temperature
+        //             { width: '10%', targets: 6 },    // thermostat
+        //             { width: '15%', targets: 7 },    // barostat
+        //             { width: '8%', targets: 8 },    // integrator
+        //         ],
+        //     });
+        // });
+
     </script>
 {% endblock %}

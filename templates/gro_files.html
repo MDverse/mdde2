@@ -5,6 +5,10 @@
 <link href="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.css" rel="stylesheet" integrity="sha384-I4/lBH5Ccr4H+zWkgZKgw+25BTqhOtQ19dxtlM831GM+YFw3OTWq2i12hoyfbfG7" crossorigin="anonymous">
 <script src="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.js" integrity="sha384-tIv+/jMSAROhLvH+FmDUrriZf12whWUskuKSHrpD9poD1Wn5pzQM8PPBeB9qtgtM" crossorigin="anonymous"></script>
 
+<!-- HTMX -->
+<!-- https://htmx.org/ -->
+<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+
 <!-- Ellisis -->
 <style>
     .ellipsis {
@@ -22,45 +26,24 @@
 
     <p>Below is the GRO files summary:</p>
 
-    <table id="GROFilesTable" class="table is-striped is-hoverable" style="width:100%">
-        <thead>
-            <tr>
-                <th>dataset origin</th>
-                <th>dataset id</th>
-                <th>file name</th>
-                <th class="has-text-left">atom_number</th>
-                <th>has_protein</th>
-                <th>has_nucleic</th>
-                <th>has_lipid</th>
-                <th>has_glucid</th>
-                <th>has_water_ion</th>
-            </tr>
-        </thead>
-
-        <tbody>
-        {% for gro_file in gro_files %}
-            <tr>
-                <td>{{ gro_file.file.dataset.origin.name if gro_file.file.dataset.origin.name else 'N/A' }}</td>
-                <td><a href="{{ gro_file.file.dataset.url }}">{{ gro_file.file.dataset.id_in_origin }}</a></td>
-                <td class="ellipsis" title="{{ gro_file.file.name }}">{{ gro_file.file.name }}</td>
-                <td class="has-text-left">{{ "{:,.0f}".format(gro_file.atom_number) }}</td>
-                <td>{{ gro_file.has_protein }}</td>
-                <td>{{ gro_file.has_nucleic }}</td>
-                <td>{{ gro_file.has_lipid }}</td>
-                <td>{{ gro_file.has_glucid }}</td>
-                <td>{{ gro_file.has_water_ion }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
+    <table id="GROFilesTable"
+    class="table is-striped is-hoverable"
+    style="width:100%"
+    hx-get="/all_gro_files_data"
+    hx-trigger="load once"
+    hx-target="#GROFilesTable">
+        
     </table>
 </section>
 {% endblock %}
 
 {% block script_extra %}
     <script>
-        $(document).ready(function() {
+        document.body.addEventListener('htmx:afterSwap', function(evt) {
+            if (evt.detail.target.id === "GROFilesTable") {
+            // Re-initialize DataTables
             $('#GROFilesTable').DataTable({
-                "order": [[2, 'desc']],
+               "order": [[2, 'desc']],
                 autoWidth: false,
                 orderClasses: false,
                 layout: {
@@ -82,6 +65,7 @@
                 { width: '9%', targets: 8 },    // has_water_ion
             ],
             });
+            }
         });
     </script>
 {% endblock %}

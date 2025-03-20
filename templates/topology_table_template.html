@@ -17,7 +17,7 @@
     {% for top_file in top_files %}
     <tr>
         <td>{{ top_file.file.dataset.origin.name if top_file.file.dataset.origin.name else 'N/A' }}</td>
-        <td>{{ top_file.file.dataset.id_in_origin }}</td>
+        <td><a href="{{ top_file.file.dataset.url }}">{{ top_file.file.dataset.id_in_origin }}</a></td>
         <td class="ellipsis" title="{{ top_file.file.name }}">{{ top_file.file.name }}</td>
         <td class="has-text-left">{{ "{:,.0f}".format(top_file.atom_number) }}</td>
         <td>{{ top_file.has_protein }}</td>

@@ -25,6 +25,10 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
+# ============================================================================
+# Endpoints for the page:   index.html
+# ============================================================================
+
 @app.get("/", response_class=HTMLResponse)
 async def read_index(request: Request):
     # Generate the wordcloud image.
@@ -57,6 +61,10 @@ async def read_index(request: Request):
     )
 
 
+# ============================================================================
+# Endpoints for the page:   search.html
+# ============================================================================
+
 @app.get("/search", response_class=HTMLResponse)
 async def search_page(request: Request):
     # Get the list of all datasets (with related data loaded)
@@ -70,7 +78,6 @@ async def search_page(request: Request):
         }
     )
 
-
 @app.get("/dataset/{dataset_id}", response_class=HTMLResponse)
 async def get_dataset_info(
     request: Request,
@@ -83,10 +90,9 @@ async def get_dataset_info(
     )
 
 
-
-
-
-
+# ============================================================================
+# Endpoints for the page:   dataset_files_info.html
+# ============================================================================
 
 @app.get("/dataset/{dataset_id}/files", response_class=HTMLResponse)
 async def dataset_files(request: Request, dataset_id: int):
@@ -128,13 +134,12 @@ async def dataset_files(request: Request, dataset_id: int):
     )
 
 
-
-
-
-
+# ============================================================================
+# Endpoints for the page:   file_types.html
+# ============================================================================
 
 @app.get("/file_types", response_class=HTMLResponse)
-async def gro_files(request: Request):
+async def file_types_table(request: Request):
     file_type_stats_summary = get_file_type_stats()
     return templates.TemplateResponse(
         "file_types.html",
@@ -143,7 +148,6 @@ async def gro_files(request: Request):
             "file_type_stats_summary": file_type_stats_summary,
         }
     )
-
 
 # Endpoint to render the file type download prompt snippet.
 @app.get("/download_tsv/{file_type}", response_class=HTMLResponse)
@@ -157,7 +161,7 @@ async def download_tsv_files_for_file_type(request: Request, file_type: str):
         }
     )
 
-# Endpoint to trigger the CSV file download.
+# Endpoint to trigger the TSV file download.
 @app.get("/download_tsv_file/{file_type}")
 async def download_tsv_file(file_type: str):
     df = get_tsv_depending_on_type(file_type)
@@ -168,24 +172,50 @@ async def download_tsv_file(file_type: str):
     return Response(content=tsv_data, media_type="text/tsv", headers=headers)
 
 
+# ============================================================================
+# Endpoints for the page:   gro_file.html
+# ============================================================================
+
 @app.get("/gro_files", response_class=HTMLResponse)
-async def gro_files(request: Request):
-    gro_files = get_top_files()
+async def gro_files_page(request: Request):
     return templates.TemplateResponse(
         "gro_files.html",
         {
             "request": request,
-            "gro_files": gro_files,
         }
     )
 
+@app.get("/all_gro_files_data", response_class=HTMLResponse)
+async def all_gro_files_data(request: Request):
+    top_files = get_top_files()
+    return templates.TemplateResponse(
+        "topology_table_template.html",
+        {
+            "request": request,
+            "top_files": top_files,
+        }
+    )
+
+# ============================================================================
+# Endpoints for the page:   mdp_file.html
+# ============================================================================
+
 @app.get("/mdp_files", response_class=HTMLResponse)
-async def mdp_files(request: Request):
-    mdp_files = get_param_files()
+async def mdp_files_page(request: Request):
     return templates.TemplateResponse(
         "mdp_files.html",
         {
             "request": request,
-            "mdp_files": mdp_files,
+        }
+    )
+
+@app.get("/all_mdp_files_data", response_class=HTMLResponse)
+async def all_mdp_files_data(request: Request):
+    param_files = get_param_files()
+    return templates.TemplateResponse(
+        "parameter_table_template.html",
+        {
+            "request": request,
+            "param_files": param_files,
         }
     )

@@ -16,13 +16,16 @@
 
 <tbody>
 {% for param_file in param_files %}
+    <!-- The numerical columns are being inserted as string values. In order to convert them back
+    into numerical values, ve add '|float' to each of them so that we can later
+    order the rows based on those columns-->
     <tr>
         <td>{{ param_file.file.dataset.origin.name if param_file.file.dataset.origin.name else 'N/A' }}</td>
-        <td>{{ param_file.file.dataset.id_in_origin }}</td>
+        <td><a href="{{ param_file.file.dataset.url }}">{{ param_file.file.dataset.id_in_origin }}</a></td>
         <td class="ellipsis" title="{{ param_file.file.name }}">{{ param_file.file.name }}</td>
-        <td>{{ param_file.dt }}</td>
-        <td>{{ "{:,.0f}".format(param_file.nsteps) }}</td>
-        <td>{{ param_file.temperature }}</td>
+        <td>{{ param_file.dt|float }}</td>
+        <td>{{ "{:,.0f}".format(param_file.nsteps|float) if param_file.nsteps|float is not none else 'N/A' }}</td>
+        <td>{{ param_file.temperature|float }}</td>
         <td>{{ param_file.thermostat.name }}</td>
         <td>{{ param_file.barostat.name }}</td>
         <td>{{ param_file.integrator.name }}</td>
