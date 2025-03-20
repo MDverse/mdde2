@@ -90,19 +90,19 @@
         <ul>
             <li class="tablinks" data-tab="all_files" hx-get="/dataset/{{ dataset.dataset_id }}/files/all_files"
                 hx-trigger="click once" hx-target="#all_files_tables_for_specific_dataset">
-                <a onclick="openTab(event, 'all_files')">All files ({{files.total_files}})</a>
+                <a onclick="openTab(event, 'all_files')">All files ({{total_files.total_all_files}})</a>
             </li>
             <li class="tablinks" data-tab="top_files" hx-get="/dataset/{{ dataset.dataset_id }}/files/top_files"
                 hx-trigger="click once" hx-target="#top_files_tables_for_specific_dataset">
-                <a onclick="openTab(event, 'top_files')">Topology files ({{files.total_topology_files}})</a>
+                <a onclick="openTab(event, 'top_files')">Analysed topology files ({{analysed_files.analysed_topology_files}}/{{total_files.total_topology_files}})</a>
             </li>
             <li class="tablinks" data-tab="param_files" hx-get="/dataset/{{ dataset.dataset_id }}/files/param_files"
                 hx-trigger="click once" hx-target="#param_files_tables_for_specific_dataset">
-                <a onclick="openTab(event, 'param_files')">Parameter files ({{files.total_parameter_files}})</a>
+                <a onclick="openTab(event, 'param_files')">Analysed parameter files ({{analysed_files.analysed_parameter_files}}/{{total_files.total_parameter_files}})</a>
             </li>
             <li class="tablinks" data-tab="traj_files" hx-get="/dataset/{{ dataset.dataset_id }}/files/traj_files"
                 hx-trigger="click once" hx-target="#traj_files_tables_for_specific_dataset">
-                <a onclick="openTab(event, 'traj_files')">Trajectory files ({{files.total_trajectory_files}})</a>
+                <a onclick="openTab(event, 'traj_files')">Analysed trajectory files ({{analysed_files.analysed_trajectory_files}}/{{total_files.total_trajectory_files}})</a>
             </li>
         </ul>
     </div>
@@ -111,25 +111,21 @@
         <ul>
             <li class="tabcontent" id="all_files">
                 <!-- The "all_files" content will be loaded via htmx once and then toggled -->
-                <h3 class="title is-spaced">Table containing all the files associated with the dataset</h3>
                 <table class="table is-striped is-hoverable" id="all_files_tables_for_specific_dataset">
                     <!-- Content loaded by htmx on page load -->
                 </table>
             </li>
             <li class="tabcontent" id="top_files" style="display: none;">
-                <h3 class="title is-spaced">Table with all the topology files associated with the dataset</h3>
                 <table class="table is-striped is-hoverable" id="top_files_tables_for_specific_dataset">
                     <!-- Content loaded by htmx on first click -->
                 </table>
             </li>
             <li class="tabcontent" id="param_files" style="display: none;">
-                <h3 class="title is-spaced">Table with all the parameter files associated with the dataset</h3>
                 <table class="table is-striped is-hoverable" id="param_files_tables_for_specific_dataset">
                     <!-- Content loaded by htmx on first click -->
                 </table>
             </li>
             <li class="tabcontent" id="traj_files" style="display: none;">
-                <h3 class="title is-spaced">Table with all the trajectory files associated with the dataset</h3>
                 <table class="table is-striped is-hoverable" id="traj_files_tables_for_specific_dataset">
                     <!-- Content loaded by htmx on first click -->
                 </table>
@@ -173,21 +169,35 @@
 
     document.addEventListener('htmx:afterSwap', function (event) {
         // Check the ID of the target element that was just updated
-        if (event.target.id === 'top_files_tables_for_specific_dataset') {
+        if (event.target.id === 'all_files_tables_for_specific_dataset') {
+            $('#all_files_tables_for_specific_dataset').DataTable();
+        }
+        else if (event.target.id === 'top_files_tables_for_specific_dataset') {
             // Re-initialize the DataTable now that the rows are present
             $('#top_files_tables_for_specific_dataset').DataTable({
                 autoWidth: false,
                 orderClasses: false,
+                columnDefs: [
+                    { "visible": true, "targets": [ 2,3,4,5,6,7,8 ] },
+                    { "visible": false, "targets": [ '_all' ] }
+                ],
             });
         }
-        else if (event.target.id === 'all_files_tables_for_specific_dataset') {
-            $('#all_files_tables_for_specific_dataset').DataTable();
-        }
         else if (event.target.id === 'param_files_tables_for_specific_dataset') {
-            $('#param_files_tables_for_specific_dataset').DataTable();
+            $('#param_files_tables_for_specific_dataset').DataTable({
+                columnDefs: [
+                    { "visible": true, "targets": [ 2,3,4,5,6,7,8 ] },
+                    { "visible": false, "targets": [ '_all' ] }
+                ],
+            });
         }
         else if (event.target.id === 'traj_files_tables_for_specific_dataset') {
-            $('#traj_files_tables_for_specific_dataset').DataTable();
+            $('#traj_files_tables_for_specific_dataset').DataTable({
+                columnDefs: [
+                    { "visible": true, "targets": [ 2,3,4] },
+                    { "visible": false, "targets": [ '_all' ] }
+                ],
+            });
         }
     });
 </script>

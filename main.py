@@ -76,7 +76,7 @@ async def get_dataset_info(
     request: Request,
     dataset_id: int
     ):
-    dataset, _ = get_dataset_info_by_id(dataset_id)
+    dataset, _, _ = get_dataset_info_by_id(dataset_id)
     return templates.TemplateResponse(
         "dataset_info.html",
         {"request": request, "dataset": dataset}
@@ -90,9 +90,9 @@ async def get_dataset_info(
 
 @app.get("/dataset/{dataset_id}/files", response_class=HTMLResponse)
 async def dataset_files(request: Request, dataset_id: int):
-    dataset, files = get_dataset_info_by_id(dataset_id)
+    dataset, total_files, analysed_files = get_dataset_info_by_id(dataset_id)
     return templates.TemplateResponse(
-        "dataset_file_info.html", {"request": request, "dataset": dataset, "files": files}
+        "dataset_file_info.html", {"request": request, "dataset": dataset, "total_files": total_files, "analysed_files": analysed_files}
     )
 
 

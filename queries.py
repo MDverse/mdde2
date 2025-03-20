@@ -1,5 +1,8 @@
 from pathlib import Path
 
+import time
+from datetime import timedelta
+
 import pandas as pd
 import matplotlib.pyplot as plt
 from bokeh.models import ColumnDataSource
@@ -454,9 +457,9 @@ def get_dataset_info_by_id(dataset_id: int):
 
         # Count how many total files, topology, parameter, and
         # trajectory files are in the dataset
-        statement_files = (
+        statement_total_files = (
             select(
-            func.count(File.file_id).label("total_files"),
+            func.count(File.file_id).label("total_all_files"),
             func.count(File.file_id).filter(FileType.name == "gro").label("total_topology_files"),
             func.count(File.file_id).filter(FileType.name == "mdp").label("total_parameter_files"),
             func.count(File.file_id).filter(FileType.name == "xtc").label("total_trajectory_files"),
@@ -465,9 +468,31 @@ def get_dataset_info_by_id(dataset_id: int):
             .where(File.dataset_id == dataset_id)
         )
 
+        # Count how many files have been analysed for this dataset,
+        # a.k.a. how many are actually in the tables
+        statement_analysed_files = select(
+            (select(func.count(TopologyFile.file_id))
+            .select_from(TopologyFile)
+            .join(File, File.file_id == TopologyFile.file_id, isouter=True)
+            .where(File.dataset_id == dataset_id)
+            ).label("analysed_topology_files"),
+            (select(func.count(ParameterFile.file_id))
+            .select_from(ParameterFile)
+            .join(File, File.file_id == ParameterFile.file_id, isouter=True)
+            .where(File.dataset_id == dataset_id)
+            ).label("analysed_parameter_files"),
+            (select(func.count(TrajectoryFile.file_id))
+            .select_from(TrajectoryFile)
+            .join(File, File.file_id == TrajectoryFile.file_id, isouter=True)
+            .where(File.dataset_id == dataset_id)
+            ).label("analysed_trajectory_files")
+        )
+
         result_dataset = session.exec(statement_dataset).first()
-        result_files = session.exec(statement_files).first()
-        return result_dataset, result_files
+        result_total_files = session.exec(statement_total_files).first()
+        result_analysed_files = session.exec(statement_analysed_files).first()
+
+        return result_dataset, result_total_files, result_analysed_files
 
 
 # ============================================================================
@@ -520,6 +545,8 @@ def get_param_files(dataset_id: Optional[int] = None) -> list[ParameterFile]:
     
     If a dataset_id is provided, only parameter files for that dataset are returned.
     """
+    start_1 = time.perf_counter()
+
     statement = (
         select(ParameterFile)
         .options(
@@ -538,6 +565,11 @@ def get_param_files(dataset_id: Optional[int] = None) -> list[ParameterFile]:
     
     with Session(engine) as session:
         results = session.exec(statement).all()
+    
+        execution_time_1 = time.perf_counter() - start_1
+        elapsed_time_1 = str(timedelta(seconds=execution_time_1)).split('.')[0]
+        print(f"Query time: {elapsed_time_1}\n")
+
         return results
 
 

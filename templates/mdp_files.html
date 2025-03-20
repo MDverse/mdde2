@@ -39,13 +39,16 @@
 
         <tbody>
         {% for mdp_file in mdp_files %}
+        <!-- The numerical columns are being inserted as string values. In order to convert them back
+        into numerical values, ve add '|float' to each of them so that we can later
+        order the rows based on those columns-->
             <tr>
                 <td>{{ mdp_file.file.dataset.origin.name if mdp_file.file.dataset.origin.name else 'N/A' }}</td>
-                <td>{{ mdp_file.file.dataset.id_in_origin }}</td>
+                <td><a href="{{ mdp_file.file.dataset.url }}">{{ mdp_file.file.dataset.id_in_origin }}</a></td>
                 <td class="ellipsis" title="{{ mdp_file.file.name }}">{{ mdp_file.file.name }}</td>
-                <td>{{ mdp_file.dt }}</td>
-                <td>{{ mdp_file.nsteps }}</td>
-                <td>{{ mdp_file.temperature }}</td>
+                <td>{{ mdp_file.dt|float }}</td>
+                <td>{{ "{:,.0f}".format(mdp_file.nsteps|float) if mdp_file.nsteps|float is not none else 'N/A' }}</td>
+                <td>{{ mdp_file.temperature|float }}</td>
                 <td>{{ mdp_file.thermostat.name }}</td>
                 <td>{{ mdp_file.barostat.name }}</td>
                 <td>{{ mdp_file.integrator.name }}</td>
@@ -60,7 +63,6 @@
     <script>
         $(document).ready(function() {
             $('#MDPFilesTable').DataTable({
-                "order": [[2, 'desc']],
                 autoWidth: false,
                 orderClasses: false,
                 layout: {

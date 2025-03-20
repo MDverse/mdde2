@@ -41,7 +41,7 @@
         {% for gro_file in gro_files %}
             <tr>
                 <td>{{ gro_file.file.dataset.origin.name if gro_file.file.dataset.origin.name else 'N/A' }}</td>
-                <td>{{ gro_file.file.dataset.id_in_origin }}</td>
+                <td><a href="{{ gro_file.file.dataset.url }}">{{ gro_file.file.dataset.id_in_origin }}</a></td>
                 <td class="ellipsis" title="{{ gro_file.file.name }}">{{ gro_file.file.name }}</td>
                 <td class="has-text-left">{{ "{:,.0f}".format(gro_file.atom_number) }}</td>
                 <td>{{ gro_file.has_protein }}</td>
