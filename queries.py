@@ -23,6 +23,9 @@ from db_schema import (
     ParameterFile,
     TopologyFile,
     TrajectoryFile,
+    Barostat,
+    Integrator,
+    Thermostat,
     engine,
 )
 
@@ -31,7 +34,7 @@ from db_schema import (
 # ============================================================================
 
 
-def get_dataset_origin_summary():
+def get_dataset_origin_summary() -> tuple[list[any], dict[str, str]]:
     """
     Returns rows grouped by dataset origin, with columns:
         dataset_origin,
@@ -533,10 +536,18 @@ def get_top_files(dataset_id: Optional[int] = None) -> list[TopologyFile]:
     If a dataset_id is provided, only topology files for that dataset are returned.
     Otherwise, all topology files are returned.
     """
-    statement = select(TopologyFile).options(
-        selectinload(TopologyFile.file)
-            .selectinload(File.dataset)
-            .selectinload(Dataset.origin)
+
+    statement = (
+        select(
+            TopologyFile,
+            File.name.label("file_name"),
+            Dataset.id_in_origin.label("dataset_id_in_origin"),
+            Dataset.url.label("dataset_url"),
+            DatasetOrigin.name.label("dataset_origin"),
+        )
+        .join(File, TopologyFile.file_id == File.file_id)
+        .join(Dataset, File.dataset_id == Dataset.dataset_id)
+        .join(DatasetOrigin, Dataset.origin_id == DatasetOrigin.origin_id)
     )
     
     if dataset_id is not None:
@@ -544,6 +555,7 @@ def get_top_files(dataset_id: Optional[int] = None) -> list[TopologyFile]:
     
     with Session(engine) as session:
         results = session.exec(statement).all()
+        
         return results
 
 
@@ -554,18 +566,24 @@ def get_param_files(dataset_id: Optional[int] = None) -> list[ParameterFile]:
     
     If a dataset_id is provided, only parameter files for that dataset are returned.
     """
-    start_1 = time.perf_counter()
 
     statement = (
-        select(ParameterFile)
-        .options(
-            selectinload(ParameterFile.file)
-                .selectinload(File.dataset)
-                .selectinload(Dataset.origin),
-            selectinload(ParameterFile.barostat),
-            selectinload(ParameterFile.integrator),
-            selectinload(ParameterFile.thermostat),
+        select(
+            ParameterFile,
+            File.name.label("file_name"),
+            Dataset.id_in_origin.label("dataset_id_in_origin"),
+            Dataset.url.label("dataset_url"),
+            DatasetOrigin.name.label("dataset_origin"),
+            Barostat.name.label("barostat_name"),
+            Integrator.name.label("integrator_name"),
+            Thermostat.name.label("thermostat_name"),
         )
+        .join(File, ParameterFile.file_id == File.file_id)
+        .join(Dataset, File.dataset_id == Dataset.dataset_id)
+        .join(DatasetOrigin, Dataset.origin_id == DatasetOrigin.origin_id)
+        .outerjoin(Barostat, ParameterFile.barostat_id == Barostat.barostat_id)
+        .outerjoin(Integrator, ParameterFile.integrator_id == Integrator.integrator_id)
+        .outerjoin(Thermostat, ParameterFile.thermostat_id == Thermostat.thermostat_id)
     )
     
     if dataset_id is not None:
@@ -574,10 +592,6 @@ def get_param_files(dataset_id: Optional[int] = None) -> list[ParameterFile]:
     
     with Session(engine) as session:
         results = session.exec(statement).all()
-    
-        execution_time_1 = time.perf_counter() - start_1
-        elapsed_time_1 = str(timedelta(seconds=execution_time_1)).split('.')[0]
-        print(f"Query time: {elapsed_time_1}\n")
 
         return results
 

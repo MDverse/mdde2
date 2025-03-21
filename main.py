@@ -201,7 +201,7 @@ async def all_gro_files_data(request: Request):
 # ============================================================================
 
 @app.get("/mdp_files", response_class=HTMLResponse)
-async def mdp_files_page(request: Request):
+def mdp_files_page(request: Request):
     return templates.TemplateResponse(
         "mdp_files.html",
         {
@@ -210,7 +210,7 @@ async def mdp_files_page(request: Request):
     )
 
 @app.get("/all_mdp_files_data", response_class=HTMLResponse)
-async def all_mdp_files_data(request: Request):
+def all_mdp_files_data(request: Request):
     param_files = get_param_files()
     return templates.TemplateResponse(
         "parameter_table_template.html",

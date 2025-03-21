@@ -20,15 +20,15 @@
     into numerical values, ve add '|float' to each of them so that we can later
     order the rows based on those columns-->
     <tr>
-        <td>{{ param_file.file.dataset.origin.name if param_file.file.dataset.origin.name else 'N/A' }}</td>
-        <td><a href="{{ param_file.file.dataset.url }}">{{ param_file.file.dataset.id_in_origin }}</a></td>
-        <td class="ellipsis" title="{{ param_file.file.name }}">{{ param_file.file.name }}</td>
-        <td>{{ param_file.dt|float }}</td>
-        <td>{{ "{:,.0f}".format(param_file.nsteps|float) if param_file.nsteps|float is not none else 'N/A' }}</td>
-        <td>{{ param_file.temperature|float }}</td>
-        <td>{{ param_file.thermostat.name }}</td>
-        <td>{{ param_file.barostat.name }}</td>
-        <td>{{ param_file.integrator.name }}</td>
+        <td>{{ param_file.dataset_origin if param_file.dataset_origin else 'N/A' }}</td>
+        <td><a href="{{ param_file.dataset_url }}">{{ param_file.dataset_id_in_origin }}</a></td>
+        <td class="ellipsis" title="{{ param_file.file_name }}">{{ param_file.file_name }}</td>
+        <td>{{ param_file[0].dt|float }}</td>
+        <td>{{ "{:,.0f}".format(param_file[0].nsteps|float) if param_file[0].nsteps|float is not none else 'N/A' }}</td>
+        <td>{{ param_file[0].temperature|float }}</td>
+        <td>{{ param_file.thermostat_name }}</td>
+        <td>{{ param_file.barostat_name }}</td>
+        <td>{{ param_file.integrator_name }}</td>
     </tr>
 {% endfor %}
 </tbody>
