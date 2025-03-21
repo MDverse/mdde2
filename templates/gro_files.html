@@ -5,19 +5,9 @@
 <link href="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.css" rel="stylesheet" integrity="sha384-I4/lBH5Ccr4H+zWkgZKgw+25BTqhOtQ19dxtlM831GM+YFw3OTWq2i12hoyfbfG7" crossorigin="anonymous">
 <script src="https://cdn.datatables.net/v/dt/dt-2.2.2/date-1.5.5/sb-1.8.2/datatables.min.js" integrity="sha384-tIv+/jMSAROhLvH+FmDUrriZf12whWUskuKSHrpD9poD1Wn5pzQM8PPBeB9qtgtM" crossorigin="anonymous"></script>
 
-<!-- HTMX -->
-<!-- https://htmx.org/ -->
-<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+<!-- DataTables Ellipsis -->
+<script src="https://cdn.datatables.net/plug-ins/2.2.2/dataRender/ellipsis.js"></script>
 
-<!-- Ellisis -->
-<style>
-    .ellipsis {
-        max-width: 100px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-</style>
 {% endblock %}
 
 {% block main %}
@@ -26,46 +16,83 @@
 
     <p>Below is the GRO files summary:</p>
 
-    <table id="GROFilesTable"
-    class="table is-striped is-hoverable"
-    style="width:100%"
-    hx-get="/all_gro_files_data"
-    hx-trigger="load once"
-    hx-target="#GROFilesTable">
-        
-    </table>
+    <table id="GROFilesTable" class="table is-striped is-hoverable" style="width:100%; table-layout: fixed;">
+        <thead>
+          <tr>
+            <th>dataset origin</th>
+            <th>dataset id</th>
+            <th>file name</th>
+            <th>atom_number</th>
+            <th>has_protein</th>
+            <th>has_nucleic</th>
+            <th>has_lipid</th>
+            <th>has_glucid</th>
+            <th>has_water_ion</th>
+          </tr>
+        </thead>
+      </table>
 </section>
 {% endblock %}
 
 {% block script_extra %}
     <script>
-        document.body.addEventListener('htmx:afterSwap', function(evt) {
-            if (evt.detail.target.id === "GROFilesTable") {
-            // Re-initialize DataTables
-            $('#GROFilesTable').DataTable({
-               "order": [[2, 'desc']],
-                autoWidth: false,
-                orderClasses: false,
-                layout: {
-                    topStart: {
-                        searchBuilder: {
-                            // columns: [1, 2, 3, 4, 5, 6]
-                        }
+        $('#GROFilesTable').DataTable({
+            ajax: {
+                url: '/all_gro_files_data', // JSON endpoint
+                dataSrc: '' // A plain JSON array
+            },
+
+            columns: [
+                { data: 'dataset_origin' },
+                { 
+                    data: 'dataset_id_in_origin',
+                    render: function(data, type, row) {
+                        // data: dataset_id_in_origin
+                        // row: the entire row data, including dataset_url
+                        return '<a href="' + row.dataset_url + '">' + data + '</a>';
                     }
                 },
-                columnDefs: [
-                { width: '11%', targets: 0 },    // datset origin
+                { 
+                    data: 'file_name',
+                    render: $.fn.dataTable.render.ellipsis(20),
+                },
+                {
+                    data: 'atom_number',
+                    className: 'has-text-left',
+                    render: $.fn.dataTable.render.number(',', '.', 0, ''),
+                },
+
+                { data: 'has_protein' },
+                { data: 'has_nucleic' },
+                { data: 'has_lipid' },
+                { data: 'has_glucid' },
+                { data: 'has_water_ion' }
+            ],
+
+            orderClasses: false,
+            columnDefs: [
+                { width: '11%', targets: 0 },    // dataset origin
                 { width: '11%', targets: 1 },    // dataset id
                 { width: '20%', targets: 2 },    // file name
                 { width: '13%', targets: 3 },    // atom_number
-                { width: '9%', targets: 4 },   // has_protein
-                { width: '9%', targets: 5 },    // has_nucleic
-                { width: '9%', targets: 6 },    // has_lipid
-                { width: '9%', targets: 7 },    // has_glucid
-                { width: '9%', targets: 8 },    // has_water_ion
+                { width: '9%', targets: 4 },     // has_protein
+                { width: '9%', targets: 5 },     // has_nucleic
+                { width: '9%', targets: 6 },     // has_lipid
+                { width: '9%', targets: 7 },     // has_glucid
+                { width: '9%', targets: 8 }      // has_water_ion
             ],
-            });
-            }
+            autoWidth: false, // Disable automatic calculation so the custom widths are used
+            
+            layout: {
+                topStart: {
+                    searchBuilder: {
+                            // columns: [1, 2, 3, 4, 5, 6]
+                    }
+                }
+            },
+            
         });
+        
+
     </script>
 {% endblock %}

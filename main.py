@@ -1,6 +1,6 @@
 from bokeh.embed import components
 from fastapi import FastAPI, Request, Response
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
@@ -185,16 +185,25 @@ async def gro_files_page(request: Request):
         }
     )
 
-@app.get("/all_gro_files_data", response_class=HTMLResponse)
-async def all_gro_files_data(request: Request):
+@app.get("/all_gro_files_data", response_class=JSONResponse)
+async def all_gro_files_data():
     top_files = get_top_files()
-    return templates.TemplateResponse(
-        "topology_table_template.html",
-        {
-            "request": request,
-            "top_files": top_files,
-        }
-    )
+    data = []
+    for top_file_object, file_name, dataset_id_in_origin, dataset_url, dataset_origin in top_files:
+        data.append({
+            "dataset_origin": dataset_origin if dataset_origin else "N/A",
+            "dataset_url": dataset_url,
+            "dataset_id_in_origin": dataset_id_in_origin,
+            "file_name": file_name,
+            "atom_number": top_file_object.atom_number,
+            "has_protein": top_file_object.has_protein,
+            "has_nucleic": top_file_object.has_nucleic,
+            "has_lipid": top_file_object.has_lipid,
+            "has_glucid": top_file_object.has_glucid,
+            "has_water_ion": top_file_object.has_water_ion
+        })
+    return data
+
 
 # ============================================================================
 # Endpoints for the page:   mdp_file.html
@@ -209,13 +218,21 @@ def mdp_files_page(request: Request):
         }
     )
 
-@app.get("/all_mdp_files_data", response_class=HTMLResponse)
-def all_mdp_files_data(request: Request):
+@app.get("/all_mdp_files_data", response_class=JSONResponse)
+def all_mdp_files_data():
     param_files = get_param_files()
-    return templates.TemplateResponse(
-        "parameter_table_template.html",
-        {
-            "request": request,
-            "param_files": param_files,
-        }
-    )
+    data = []
+    for param_file_object,file_name, dataset_id_in_origin, dataset_url, dataset_origin, barostat_name, thermostat_name, integrator_name in param_files:
+        data.append({
+            "dataset_origin": dataset_origin if dataset_origin else "N/A",
+            "dataset_url": dataset_url,
+            "dataset_id_in_origin": dataset_id_in_origin,
+            "file_name": file_name,
+            "dt": param_file_object.dt,
+            "nsteps": param_file_object.nsteps,
+            "temperature": param_file_object.temperature,
+            "thermostat_name": thermostat_name,
+            "barostat_name": barostat_name,
+            "integrator_name": integrator_name
+        })
+    return data
