@@ -13,21 +13,18 @@
 {% block main %}
 <section class="section">
     <h1>GRO files</h1>
-
-    <p>Below is the GRO files summary:</p>
-
     <table id="GROFilesTable" class="table is-striped is-hoverable" style="width:100%; table-layout: fixed;">
         <thead>
           <tr>
             <th>dataset origin</th>
             <th>dataset id</th>
             <th>file name</th>
-            <th>atom_number</th>
-            <th>has_protein</th>
-            <th>has_nucleic</th>
-            <th>has_lipid</th>
-            <th>has_glucid</th>
-            <th>has_water_ion</th>
+            <th>atom number</th>
+            <th>has protein</th>
+            <th>has nucleic</th>
+            <th>has lipid</th>
+            <th>has glucid</th>
+            <th>has water ion</th>
           </tr>
         </thead>
       </table>
@@ -58,7 +55,6 @@
                 },
                 {
                     data: 'atom_number',
-                    className: 'has-text-left',
                     render: $.fn.dataTable.render.number(',', '.', 0, ''),
                 },
                 { data: 'has_protein' },
