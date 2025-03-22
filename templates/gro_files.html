@@ -37,19 +37,19 @@
 {% block script_extra %}
     <script>
         $('#GROFilesTable').DataTable({
-            ajax: {
-                url: '/all_gro_files_data', // JSON endpoint
-                dataSrc: '' // A plain JSON array
-            },
-
+            ajax: '/all_gro_files_data',
+            processing: true,
+            serverSide: true,
             columns: [
-                { data: 'dataset_origin' },
+                { 
+                    data: 'dataset_origin' 
+                },
                 { 
                     data: 'dataset_id_in_origin',
                     render: function(data, type, row) {
                         // data: dataset_id_in_origin
                         // row: the entire row data, including dataset_url
-                        return '<a href="' + row.dataset_url + '">' + data + '</a>';
+                        return '<a href="' + row.dataset_url + '" target="_blank">' + data + '</a>';
                     }
                 },
                 { 
@@ -61,14 +61,12 @@
                     className: 'has-text-left',
                     render: $.fn.dataTable.render.number(',', '.', 0, ''),
                 },
-
                 { data: 'has_protein' },
                 { data: 'has_nucleic' },
                 { data: 'has_lipid' },
                 { data: 'has_glucid' },
                 { data: 'has_water_ion' }
             ],
-
             orderClasses: false,
             columnDefs: [
                 { width: '11%', targets: 0 },    // dataset origin
@@ -82,7 +80,6 @@
                 { width: '9%', targets: 8 }      // has_water_ion
             ],
             autoWidth: false, // Disable automatic calculation so the custom widths are used
-            
             layout: {
                 topStart: {
                     searchBuilder: {
@@ -92,7 +89,5 @@
             },
             
         });
-        
-
     </script>
 {% endblock %}

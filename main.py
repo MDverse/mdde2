@@ -186,24 +186,41 @@ async def gro_files_page(request: Request):
     )
 
 @app.get("/all_gro_files_data", response_class=JSONResponse)
-async def all_gro_files_data():
-    top_files = get_top_files()
-    data = []
-    for top_file_object, file_name, dataset_id_in_origin, dataset_url, dataset_origin in top_files:
-        data.append({
-            "dataset_origin": dataset_origin if dataset_origin else "N/A",
-            "dataset_url": dataset_url,
-            "dataset_id_in_origin": dataset_id_in_origin,
-            "file_name": file_name,
-            "atom_number": top_file_object.atom_number,
-            "has_protein": top_file_object.has_protein,
-            "has_nucleic": top_file_object.has_nucleic,
-            "has_lipid": top_file_object.has_lipid,
-            "has_glucid": top_file_object.has_glucid,
-            "has_water_ion": top_file_object.has_water_ion
-        })
-    return data
-
+async def all_gro_files_data(request: Request):
+    params = request.query_params.get
+    sort_column_name = "dataset_origin"
+    if params("order[0][column]"):
+        sort_column_idx = params("order[0][column]")
+        sort_column_name = params(f"columns[{sort_column_idx}][data]")
+    sort_direction = "asc"
+    if params("order[0][dir]") == "desc":
+        sort_direction = "desc"
+    print(
+        sort_column_name,
+        sort_direction,
+        params("start"),
+        params("length"),
+        params("search[value]"),
+    )
+    number_of_top_files_total = len(get_top_files())
+    number_of_top_files_filtered = len(get_top_files(
+        search=params("search[value]"),
+    ))
+    top_files = get_top_files(
+        sort_column_name=sort_column_name,
+        sort_direction=sort_direction,
+        start=params("start"),
+        length=params("length"),
+        search=params("search[value]"),
+    )
+    # Serialize SQLmodel results to JSON
+    data = [ row._mapping for row in top_files ] 
+    return {
+        "draw": params("draw"),
+        "recordsTotal": number_of_top_files_total,
+        "recordsFiltered": number_of_top_files_filtered,
+        "data": data,
+    }
 
 # ============================================================================
 # Endpoints for the page:   mdp_file.html
