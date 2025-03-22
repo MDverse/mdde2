@@ -1,5 +1,3 @@
-<h2>Dataset information</h2>
-
 <div class="card">
     <div class="card-content">
         <p class="title">
@@ -21,7 +19,7 @@
             <div class="column">
                 <p class="title is-5">General information</p>
                 <ul>
-                    <li>Source: <a href="{{ dataset.url }}" target="_blank">{{ dataset.id_in_origin }}</a> from {{ dataset.origin.name if dataset.origin else 'N/A' }}</li>
+                    <li>Dataset: <a href="{{ dataset.url }}" target="_blank">{{ dataset.id_in_origin }}</a> from {{ dataset.origin.name if dataset.origin else 'N/A' }}</li>
                     <li>Licence: {{ dataset.license }}</li>
                     <li>DOI: <a href="https://doi.org/{{ dataset.doi }}" target="_blank">{{ dataset.doi }}</a></li>
                 </ul>
