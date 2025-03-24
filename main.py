@@ -187,6 +187,23 @@ async def gro_files_page(request: Request):
 
 @app.get("/all_gro_files_data", response_class=JSONResponse)
 async def all_gro_files_data(request: Request):
+    """
+    Get GRO files data for DataTables.
+
+    See:
+    - https://datatables.net/manual/server-side
+    - https://blog.stackpuz.com/create-an-api-for-datatables-with-fastapi/
+
+    Parameters
+    ----------
+    request : Request
+        DataTables request parameters + optional dataset id.
+
+    Returns
+    -------
+    dict
+        JSON dictionnary for DataTables.
+    """
     params = request.query_params.get
     sort_column_name = "dataset_origin"
     if params("order[0][column]"):
@@ -195,13 +212,6 @@ async def all_gro_files_data(request: Request):
     sort_direction = "asc"
     if params("order[0][dir]") == "desc":
         sort_direction = "desc"
-    print(
-        sort_column_name,
-        sort_direction,
-        params("start"),
-        params("length"),
-        params("search[value]"),
-    )
     number_of_top_files_total = len(get_top_files())
     number_of_top_files_filtered = len(get_top_files(
         search=params("search[value]"),
