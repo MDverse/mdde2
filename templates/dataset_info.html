@@ -1,3 +1,8 @@
+{# Diplay title only from all datasets page #}
+{% if request.headers["hx-target"] == "dataset_details" %}
+<h2>Dataset details</h2>
+{% endif %}
+
 <div class="box">
         <p class="title">
             {{ dataset.title }}
