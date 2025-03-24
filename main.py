@@ -112,17 +112,16 @@ async def dataset_all_files(request: Request, dataset_id: int):
 
 @app.get("/dataset/{dataset_id}/files/top_files", response_class=HTMLResponse)
 async def dataset_top_files(request: Request, dataset_id: int):
-    top_files = get_top_files(dataset_id)
     return templates.TemplateResponse(
-        "topology_table_template.html", {"request": request, "top_files": top_files}
-        )
+        "topology_table_template.html", {"request": request, "dataset_id": dataset_id}
+    )
 
 
 @app.get("/dataset/{dataset_id}/files/param_files", response_class=HTMLResponse)
 async def dataset_files(request: Request, dataset_id: int):
     param_files = get_param_files(dataset_id)
     return templates.TemplateResponse(
-        "parameter_table_template.html", {"request": request, "param_files": param_files}
+        "parameter_table_template.html", {"requg param_files": param_files}
         )
 
 
@@ -185,8 +184,8 @@ async def gro_files_page(request: Request):
         }
     )
 
-@app.get("/all_gro_files_data", response_class=JSONResponse)
-async def all_gro_files_data(request: Request):
+@app.get("/files/topologie/", response_class=JSONResponse)
+async def all_gro_files_data(request: Request, dataset_id: int | None = None):
     """
     Get GRO files data for DataTables.
 
@@ -204,6 +203,8 @@ async def all_gro_files_data(request: Request):
     dict
         JSON dictionnary for DataTables.
     """
+    print("Hello from /files/topologie/")
+    print("dataset_id", dataset_id)
     params = request.query_params.get
     sort_column_name = "dataset_origin"
     if params("order[0][column]"):
@@ -212,11 +213,13 @@ async def all_gro_files_data(request: Request):
     sort_direction = "asc"
     if params("order[0][dir]") == "desc":
         sort_direction = "desc"
-    number_of_top_files_total = len(get_top_files())
+    number_of_top_files_total = len(get_top_files(dataset_id=dataset_id))
     number_of_top_files_filtered = len(get_top_files(
+        dataset_id=dataset_id,
         search=params("search[value]"),
     ))
     top_files = get_top_files(
+        dataset_id=dataset_id,
         sort_column_name=sort_column_name,
         sort_direction=sort_direction,
         start=params("start"),
@@ -224,7 +227,7 @@ async def all_gro_files_data(request: Request):
         search=params("search[value]"),
     )
     # Serialize SQLmodel results to JSON
-    data = [ row._mapping for row in top_files ] 
+    data = [ row._mapping for row in top_files ]
     return {
         "draw": params("draw"),
         "recordsTotal": number_of_top_files_total,
