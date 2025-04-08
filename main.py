@@ -121,7 +121,7 @@ async def dataset_top_files(request: Request, dataset_id: int):
 async def dataset_files(request: Request, dataset_id: int):
     param_files = get_param_files(dataset_id)
     return templates.TemplateResponse(
-        "parameter_table_template.html", {"requg param_files": param_files}
+        "parameter_table_template.html", {"request": request, "param_files": param_files}
         )
 
 

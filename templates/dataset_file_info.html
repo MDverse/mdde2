@@ -1,26 +1,13 @@
 {% extends "base.html" %}
 
 {% block head_extra %}
-
 <!-- HTMX -->
 <!-- https://htmx.org/ -->
 <script src="https://unpkg.com/htmx.org@2.0.4"
     integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
     crossorigin="anonymous"></script>
-
-
-<!-- Extra CSS for Tabs -->
-<style>
-    .tabcontent {
-        display: none;
-    }
-
-    .tabcontent.is-active {
-        display: block;
-    }
-</style>
-
 {% endblock %}
+
 
 {% block main %}
 <section class="section">
@@ -49,7 +36,5 @@
 
     <div id="files_list">
     </div>
-
 </section>
-
 {% endblock %}
