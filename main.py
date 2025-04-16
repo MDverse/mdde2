@@ -62,16 +62,16 @@ async def read_index(request: Request):
 
 
 # ============================================================================
-# Endpoints for the page:   search.html
+# Endpoints for the page: datasets.html
 # ============================================================================
 
-@app.get("/search", response_class=HTMLResponse)
+@app.get("/datasets", response_class=HTMLResponse)
 async def search_page(request: Request):
     # Get the list of all datasets (with related data loaded)
     datasets = get_all_datasets()
     # Pass the list as "datasets" to the template.
     return templates.TemplateResponse(
-        "search.html",
+        "datasets.html",
         {
             "request": request,
             "datasets": datasets,
