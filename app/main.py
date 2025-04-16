@@ -1,10 +1,12 @@
+import pathlib
+
 from bokeh.embed import components
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from queries import (
+from .queries.common import (
     create_datasets_plot,
     create_files_plot,
     generate_title_wordcloud,
@@ -18,15 +20,23 @@ from queries import (
     get_top_files,
     get_traj_files,
 )
+from .routers import datatables
+
+
+# ============================================================================
+# FastAPI app
+# ============================================================================
+print(f"Running FastAPI app from: {pathlib.Path().absolute()}")
 
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+app.include_router(datatables.router)
 
 # ============================================================================
-# Endpoints for the page:   index.html
+# Endpoints for the page: index.html
 # ============================================================================
 
 @app.get("/", response_class=HTMLResponse)
@@ -77,6 +87,7 @@ async def search_page(request: Request):
             "datasets": datasets,
         }
     )
+
 
 @app.get("/dataset/{dataset_id}", response_class=HTMLResponse)
 async def get_dataset_info(

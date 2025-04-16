@@ -34,7 +34,7 @@ wget ...
 To launch the FastAPI web app, run:
 
 ```bash
-uv run fastapi dev main.py
+uv run fastapi dev app/main.py
 ```
 
 The app should be available at the following URL:
@@ -50,5 +50,5 @@ To access the datasets-information search page, add `/search` to the URL:
 ## Production mode
 
 ```bash
-uv run uvicorn main:app --reload
+uv run uvicorn app.main:app --reload
 ```

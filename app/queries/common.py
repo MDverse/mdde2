@@ -13,7 +13,7 @@ from sqlmodel import Session, select, or_, col
 from wordcloud import STOPWORDS, WordCloud
 from typing import Optional
 
-from db_schema import (
+from ..db_schema import (
     Dataset,
     DatasetKeywordLink,
     DatasetOrigin,
