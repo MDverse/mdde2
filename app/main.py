@@ -13,7 +13,7 @@ from .frontend.file_types.controller import router as frontend_file_types_router
 print(f"Running FastAPI app from: {pathlib.Path().absolute()}")
 
 # Create FastAPI app
-app = FastAPI()
+app = FastAPI(title="MDverse")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Frontend endpoints
