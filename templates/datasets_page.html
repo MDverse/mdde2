@@ -16,7 +16,7 @@
 <section class="section">
     <h1>Datasets</h1>
 
-    <table id="DatasetsTable" class="table is-striped is-hoverable" style="width:100%;">
+    <table id="datasets_table" class="table is-striped is-hoverable" style="width:100%;">
         <thead>
             <tr>
                 <th>view</th>
@@ -41,7 +41,7 @@
 
 {% block script_extra %}
 <script type="text/javascript">
-    $('#DatasetsTable').DataTable({
+    $('#datasets_table').DataTable({
         ajax: '/datasets/datatables',
         processing: true,
         serverSide: true,
@@ -104,7 +104,7 @@
         ],
         // https://datatables.net/reference/option/drawCallback
         "drawCallback": function(settings) {
-            htmx.process('#DatasetsTable');
+            htmx.process('#datasets_table');
         },
     });
 </script>
