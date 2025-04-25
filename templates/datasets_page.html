@@ -13,8 +13,6 @@
 {% endblock %}
 
 {% block main %}
-<button class="button" hx-trigger="click" hx-get="/datasets/3" hx-swap="innerHTML" hx-target="#dataset_details">🔍</button>
-
 <section class="section">
     <h1>Datasets</h1>
 
@@ -44,7 +42,7 @@
 {% block script_extra %}
 <script type="text/javascript">
     $('#DatasetsTable').DataTable({
-        ajax: '/datatables/datasets',
+        ajax: '/datasets/datatables',
         processing: true,
         serverSide: true,
         columns: [
