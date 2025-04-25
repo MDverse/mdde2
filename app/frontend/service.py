@@ -5,7 +5,7 @@ from datetime import timedelta
 
 import pandas as pd
 import matplotlib.pyplot as plt
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, NumeralTickFormatter
 from bokeh.plotting import figure
 from sqlalchemy import extract, func, case, desc
 from sqlalchemy.orm import selectinload, aliased
@@ -241,14 +241,15 @@ def create_files_plot():
 
     p.vbar_stack(
         stackers=repositories,
-        x='year',
+        x="year",
         width=0.8,
         source=source,
         color=colors,
         legend_label=repositories
     )
-    p.xaxis.axis_label = "Year"
-    p.yaxis.axis_label = "Number of files"
+    p.xaxis.axis_label="Year"
+    p.yaxis.axis_label="Number of files"
+    p.yaxis.formatter=NumeralTickFormatter(format="0,0")
 
     p.title.text_font_size = "14pt"
     p.xaxis.axis_label_text_font_size = "12pt"
