@@ -11,17 +11,17 @@
             hx-trigger="click" hx-target="#files_list" hx-swap="innerHTML">
             All files ({{total_files.total_all_files}})
         </button>
-        <button class="button" hx-get="/dataset/{{ dataset.dataset_id }}/files/top_files"
+        <button class="button" hx-get="/datasets/{{ dataset.dataset_id }}/files/gro"
             hx-trigger="click" hx-target="#files_list" hx-swap="innerHTML">
-            Analysed topology files ({{analysed_files.analysed_topology_files}}/{{total_files.total_topology_files}})
+            Analysed gro files ({{analysed_files.analysed_topology_files}}/{{total_files.total_topology_files}})
         </button>
         <button class="button" hx-get="/dataset/{{ dataset.dataset_id }}/files/param_files"
             hx-trigger="click" hx-target="#files_list">
-            Analysed parameter files ({{analysed_files.analysed_parameter_files}}/{{total_files.total_parameter_files}})
+            Analysed mdp files ({{analysed_files.analysed_parameter_files}}/{{total_files.total_parameter_files}})
         </button>
         <button class="button" hx-get="/dataset/{{ dataset.dataset_id }}/files/traj_files"
             hx-trigger="click" hx-target="#files_list">
-            Analysed trajectory files ({{analysed_files.analysed_trajectory_files}}/{{total_files.total_trajectory_files}})
+            Analysed xtc files ({{analysed_files.analysed_trajectory_files}}/{{total_files.total_trajectory_files}})
         </button>
     </div>
 

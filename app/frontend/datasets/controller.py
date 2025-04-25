@@ -95,8 +95,14 @@ async def get_dataset_files(request: Request, dataset_id: int):
     )
 
 @router.get("/datasets/{dataset_id}/files/all", response_class=HTMLResponse)
-async def get_dataset_files_all(request: Request, dataset_id: int):
+async def get_dataset_all_files(request: Request, dataset_id: int):
     all_files = service.get_all_files_from_dataset(dataset_id)
     return templates.TemplateResponse(
         "dataset_files_all_table.html", {"request": request, "all_files": all_files}
         )
+
+@router.get("/datasets/{dataset_id}/files/gro", response_class=HTMLResponse)
+async def get_dataset_gro_files(request: Request, dataset_id: int):
+    return templates.TemplateResponse(
+        "gro_files_table.html", {"request": request, "dataset_id": dataset_id}
+    )

@@ -1,6 +1,6 @@
 <section class="section">
     <h1>GRO files</h1>
-    <table id="GROFilesTable" class="table is-striped is-hoverable" style="width:100%; table-layout: fixed;">
+    <table id="gro_files_table" class="table is-striped is-hoverable" style="width:100%; table-layout: fixed;">
         <thead>
           <tr>
             <th>dataset origin</th>
@@ -19,11 +19,11 @@
 
 {% block script_extra %}
 <script>
-    $('#GROFilesTable').DataTable({
+    $('#gro_files_table').DataTable({
         {% if dataset_id is defined %}
-        ajax: '/files/topologie/?dataset_id={{ dataset_id }}',
+        ajax: '/file_types/gro/datatables/?dataset_id={{ dataset_id }}',
         {% else %}
-        ajax: '/files/topologie/',
+        ajax: '/file_types/gro/datatables',
         {% endif %}
         processing: true,
         serverSide: true,
