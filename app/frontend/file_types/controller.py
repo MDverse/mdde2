@@ -110,3 +110,117 @@ async def get_gro_files_for_datatables(request: Request, dataset_id: int | None 
         "recordsFiltered": number_of_top_files_filtered,
         "data": data,
     }
+
+# ============================================================================
+# MDP files
+# ============================================================================
+@router.get("/file_types/mdp", response_class=HTMLResponse)
+async def display_mdp_files_page(request: Request):
+    return templates.TemplateResponse(
+        "mdp_files_page.html",
+        {
+            "request": request,
+        }
+    )
+
+@router.get("/file_types/mdp/datatables", response_class=JSONResponse)
+async def get_mdp_files_for_datatables(request: Request, dataset_id: int | None = None):
+    """
+    Get MDP files data for DataTables.
+
+    See:
+    - https://datatables.net/manual/server-side
+    - https://blog.stackpuz.com/create-an-api-for-datatables-with-fastapi/
+
+    Parameters
+    ----------
+    request : Request
+        DataTables request parameters + optional dataset id.
+
+    Returns
+    -------
+    dict
+        JSON dictionnary for DataTables.
+    """
+    print("dataset_id", dataset_id)
+    params = request.query_params.get
+    sort_column_name = "dataset_origin"
+    if params("order[0][column]"):
+        sort_column_idx = params("order[0][column]")
+        sort_column_name = params(f"columns[{sort_column_idx}][data]")
+    sort_direction = "asc"
+    if params("order[0][dir]") == "desc":
+        sort_direction = "desc"
+    number_of_mdp_files_total = len(service.get_mdp_files_for_datatables(dataset_id=dataset_id))
+    number_of_mdp_files_filtered = len(service.get_mdp_files_for_datatables(
+        dataset_id=dataset_id,
+        search=params("search[value]"),
+    ))
+    mdp_files = service.get_mdp_files_for_datatables(
+        dataset_id=dataset_id,
+        sort_column_name=sort_column_name,
+        sort_direction=sort_direction,
+        start=params("start"),
+        length=params("length"),
+        search=params("search[value]"),
+    )
+    # Serialize SQLmodel results to JSON
+    data = [ row._mapping for row in mdp_files ]
+    return {
+        "draw": params("draw"),
+        "recordsTotal": number_of_mdp_files_total,
+        "recordsFiltered": number_of_mdp_files_filtered,
+        "data": data,
+    }
+
+# ============================================================================
+# XTC files
+# ============================================================================
+@router.get("/file_types/xtc/datatables", response_class=JSONResponse)
+async def get_xtc_files_for_datatables(request: Request, dataset_id: int | None = None):
+    """
+    Get XTC files data for DataTables.
+
+    See:
+    - https://datatables.net/manual/server-side
+    - https://blog.stackpuz.com/create-an-api-for-datatables-with-fastapi/
+
+    Parameters
+    ----------
+    request : Request
+        DataTables request parameters + optional dataset id.
+
+    Returns
+    -------
+    dict
+        JSON dictionnary for DataTables.
+    """
+    params = request.query_params.get
+    sort_column_name = "dataset_origin"
+    if params("order[0][column]"):
+        sort_column_idx = params("order[0][column]")
+        sort_column_name = params(f"columns[{sort_column_idx}][data]")
+    sort_direction = "asc"
+    if params("order[0][dir]") == "desc":
+        sort_direction = "desc"
+    number_of_mdp_files_total = len(service.get_xtc_files_for_datatables(dataset_id=dataset_id))
+    number_of_mdp_files_filtered = len(service.get_xtc_files_for_datatables(
+        dataset_id=dataset_id,
+        search=params("search[value]"),
+    ))
+    mdp_files = service.get_xtc_files_for_datatables(
+        dataset_id=dataset_id,
+        sort_column_name=sort_column_name,
+        sort_direction=sort_direction,
+        start=params("start"),
+        length=params("length"),
+        search=params("search[value]"),
+    )
+    # Serialize SQLmodel results to JSON
+    data = [ row._mapping for row in mdp_files ]
+    return {
+        "draw": params("draw"),
+        "recordsTotal": number_of_mdp_files_total,
+        "recordsFiltered": number_of_mdp_files_filtered,
+        "data": data,
+    }

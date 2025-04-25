@@ -106,3 +106,15 @@ async def get_dataset_gro_files(request: Request, dataset_id: int):
     return templates.TemplateResponse(
         "gro_files_table.html", {"request": request, "dataset_id": dataset_id}
     )
+
+@router.get("/datasets/{dataset_id}/files/mdp", response_class=HTMLResponse)
+async def get_dataset_mdp_files(request: Request, dataset_id: int):
+    return templates.TemplateResponse(
+        "mdp_files_table.html", {"request": request, "dataset_id": dataset_id}
+        )
+
+@router.get("/datasets/{dataset_id}/files/xtc", response_class=HTMLResponse)
+async def get_dataset_xtc_files(request: Request, dataset_id: int):
+    return templates.TemplateResponse(
+        "xtc_files_table.html", {"request": request, "dataset_id": dataset_id}
+    )
