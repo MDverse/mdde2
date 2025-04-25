@@ -6,11 +6,11 @@ from fastapi.templating import Jinja2Templates
 
 from . import service
 
+
 router = APIRouter(
     prefix="",
     tags=["frontend"],
 )
-
 templates = Jinja2Templates(directory="templates")
 
 # ============================================================================
@@ -24,7 +24,6 @@ async def read_index(request: Request):
 
     # Get the data from query
     datasets_stats_results, datasets_stats_total_count = service.get_dataset_origin_summary()
-    
 
     # Create both Bokeh plots.
     files_plot = service.create_files_plot()
