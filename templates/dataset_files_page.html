@@ -1,14 +1,5 @@
 {% extends "base.html" %}
 
-{% block head_extra %}
-<!-- HTMX -->
-<!-- https://htmx.org/ -->
-<script src="https://unpkg.com/htmx.org@2.0.4"
-    integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
-    crossorigin="anonymous"></script>
-{% endblock %}
-
-
 {% block main %}
 <section class="section">
     {% include "dataset_info.html" %}
@@ -16,7 +7,7 @@
     <hr class="bd-hr">
 
     <div class="buttons has-addons is-fullwidth">
-        <button class="button" hx-get="/dataset/{{ dataset.dataset_id }}/files/all_files"
+        <button class="button" hx-get="/datasets/{{ dataset.dataset_id }}/files/all"
             hx-trigger="click" hx-target="#files_list" hx-swap="innerHTML">
             All files ({{total_files.total_all_files}})
         </button>

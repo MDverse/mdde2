@@ -1,18 +1,12 @@
 import pathlib
 
-from bokeh.embed import components
+
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from .queries.common import (
-    create_datasets_plot,
-    create_files_plot,
-    generate_title_wordcloud,
-    get_all_datasets,
-    get_dataset_info_by_id,
-    get_dataset_origin_summary,
     get_file_type_stats,
     get_tsv_depending_on_type,
     get_all_files_from_dataset,
@@ -20,8 +14,10 @@ from .queries.common import (
     get_top_files,
     get_traj_files,
 )
-from .frontend.datatables.controller import router as datatables_router
 
+from .frontend.datatables.controller import router as datatables_router
+from .frontend.controller import router as frontend_router
+from .frontend.datasets.controller import router as frontend_dataset_router
 
 # ============================================================================
 # FastAPI app
@@ -30,95 +26,26 @@ print(f"Running FastAPI app from: {pathlib.Path().absolute()}")
 
 app = FastAPI()
 
-templates = Jinja2Templates(directory="templates")
+
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Frontend endpoints
+app.include_router(frontend_router)
+app.include_router(frontend_dataset_router)
 app.include_router(datatables_router)
 
-# ============================================================================
-# Endpoints for the page: index.html
-# ============================================================================
+templates = Jinja2Templates(directory="templates")
 
-@app.get("/", response_class=HTMLResponse)
-async def read_index(request: Request):
-    # Generate the wordcloud image.
-    generate_title_wordcloud()
-
-    # Get the data from query
-    datasets_stats_results, datasets_stats_total_count = get_dataset_origin_summary()
-    
-
-    # Create both Bokeh plots.
-    files_plot = create_files_plot()
-    datasets_plot = create_datasets_plot()
-
-    # Get the script and div for each plot.
-    files_plot_script, files_plot_div = components(files_plot)
-    datasets_plot_script, datasets_plot_div = components(datasets_plot)
-
-    # Pass it to the template
-    return templates.TemplateResponse(
-        "index.html",
-        {
-            "request": request,
-            "results": datasets_stats_results,
-            "total_count": datasets_stats_total_count,
-            "files_plot_script": files_plot_script,
-            "files_plot_div": files_plot_div,
-            "datasets_plot_script": datasets_plot_script,
-            "datasets_plot_div": datasets_plot_div,
-        }
-    )
-
-
-# ============================================================================
-# Endpoints for the page: datasets.html
-# ============================================================================
-
-@app.get("/datasets", response_class=HTMLResponse)
-async def search_page(request: Request):
-    # Get the list of all datasets (with related data loaded)
-    datasets = get_all_datasets()
-    # Pass the list as "datasets" to the template.
-    return templates.TemplateResponse(
-        "datasets.html",
-        {
-            "request": request,
-            "datasets": datasets,
-        }
-    )
-
-
-@app.get("/dataset/{dataset_id}", response_class=HTMLResponse)
-async def get_dataset_info(
-    request: Request,
-    dataset_id: int
-    ):
-    dataset, _, _ = get_dataset_info_by_id(dataset_id)
-    return templates.TemplateResponse(
-        "dataset_info.html",
-        {"request": request, "dataset": dataset}
-    )
 
 
 # ============================================================================
 # Endpoints for the page:   dataset_files_info.html
 # ============================================================================
 
-@app.get("/dataset/{dataset_id}/files", response_class=HTMLResponse)
-async def dataset_files(request: Request, dataset_id: int):
-    dataset, total_files, analysed_files = get_dataset_info_by_id(dataset_id)
-    return templates.TemplateResponse(
-        "dataset_file_info.html", {"request": request, "dataset": dataset, "total_files": total_files, "analysed_files": analysed_files}
-    )
 
 
-@app.get("/dataset/{dataset_id}/files/all_files", response_class=HTMLResponse)
-async def dataset_all_files(request: Request, dataset_id: int):
-    all_files = get_all_files_from_dataset(dataset_id)
-    return templates.TemplateResponse(
-        "file_table_template.html", {"request": request, "all_files": all_files}
-        )
+
+
 
 
 @app.get("/dataset/{dataset_id}/files/top_files", response_class=HTMLResponse)

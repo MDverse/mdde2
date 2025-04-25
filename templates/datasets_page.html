@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block main %}
-<button class="button" hx-trigger="click" hx-get="/dataset/3" hx-swap="innerHTML" hx-target="#dataset_details">🔍</button>
+<button class="button" hx-trigger="click" hx-get="/datasets/3" hx-swap="innerHTML" hx-target="#dataset_details">🔍</button>
 
 <section class="section">
     <h1>Datasets</h1>
@@ -52,7 +52,7 @@
                 data: 'dataset_id',
                 render: function(data, type, row) {
                     // data: the entire row data
-                    return '<button class="button is-small" hx-trigger="click" hx-get="/dataset/'+ data + '" hx-swap="innerHTML" hx-target="#dataset_details">🔍</button>';
+                    return '<button class="button is-small" hx-trigger="click" hx-get="/datasets/'+ data + '" hx-swap="innerHTML" hx-target="#dataset_details">🔍</button>';
                 }
             },
             { // origin
