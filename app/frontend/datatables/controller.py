@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import JSONResponse
 
-from ..queries import datatables
+from . import service
 
 router = APIRouter(
     prefix="/datatables",
@@ -35,11 +35,11 @@ async def get_all_datasets(request: Request):
     sort_direction = "asc"
     if params("order[0][dir]") == "desc":
         sort_direction = "desc"
-    number_of_datasets_total = len(datatables.get_all_datasets())
-    number_of_datasets_filtered = len(datatables.get_all_datasets(
+    number_of_datasets_total = len(service.get_all_datasets())
+    number_of_datasets_filtered = len(service.get_all_datasets(
         search=params("search[value]"),
     ))
-    datasets = datatables.get_all_datasets(
+    datasets = service.get_all_datasets(
         sort_column_name=sort_column_name,
         sort_direction=sort_direction,
         start=params("start"),

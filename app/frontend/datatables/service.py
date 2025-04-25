@@ -3,7 +3,7 @@ from sqlalchemy import desc
 from sqlalchemy.orm import selectinload
 from sqlmodel import Session, select, or_
 
-from ..db_schema import (
+from ...db_schema import (
     Dataset,
     DatasetKeywordLink,
     DatasetAuthorLink,

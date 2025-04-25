@@ -20,7 +20,7 @@ from .queries.common import (
     get_top_files,
     get_traj_files,
 )
-from .routers import datatables
+from .frontend.datatables.controller import router as datatables_router
 
 
 # ============================================================================
@@ -33,7 +33,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-app.include_router(datatables.router)
+app.include_router(datatables_router)
 
 # ============================================================================
 # Endpoints for the page: index.html
