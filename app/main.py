@@ -7,17 +7,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 from .queries.common import (
-    get_file_type_stats,
-    get_tsv_depending_on_type,
-    get_all_files_from_dataset,
     get_param_files,
     get_top_files,
     get_traj_files,
 )
 
-from .frontend.datatables.controller import router as datatables_router
+
 from .frontend.controller import router as frontend_router
 from .frontend.datasets.controller import router as frontend_dataset_router
+from .frontend.file_types.controller import router as frontend_file_types_router
 
 # ============================================================================
 # FastAPI app
@@ -32,17 +30,9 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 # Frontend endpoints
 app.include_router(frontend_router)
 app.include_router(frontend_dataset_router)
-app.include_router(datatables_router)
+app.include_router(frontend_file_types_router)
 
 templates = Jinja2Templates(directory="templates")
-
-
-
-# ============================================================================
-# Endpoints for the page:   dataset_files_info.html
-# ============================================================================
-
-
 
 
 
@@ -71,42 +61,7 @@ async def dataset_files(request: Request, dataset_id: int):
     )
 
 
-# ============================================================================
-# Endpoints for the page:   file_types.html
-# ============================================================================
 
-@app.get("/file_types", response_class=HTMLResponse)
-async def file_types_table(request: Request):
-    file_type_stats_summary = get_file_type_stats()
-    return templates.TemplateResponse(
-        "file_types.html",
-        {
-            "request": request,
-            "file_type_stats_summary": file_type_stats_summary,
-        }
-    )
-
-# Endpoint to render the file type download prompt snippet.
-@app.get("/download_tsv/{file_type}", response_class=HTMLResponse)
-async def download_tsv_files_for_file_type(request: Request, file_type: str):
-    # Render a snippet with file type info and a download button.
-    return templates.TemplateResponse(
-        "file_type_download_prompt.html",
-        {
-            "request": request,
-            "file_type": file_type,
-        }
-    )
-
-# Endpoint to trigger the TSV file download.
-@app.get("/download_tsv_file/{file_type}")
-async def download_tsv_file(file_type: str):
-    df = get_tsv_depending_on_type(file_type)
-    tsv_data = df.to_csv(index=False, sep="\t")
-    headers = {
-        "Content-Disposition": f"attachment; filename=mdverse_{file_type}.tsv"
-    }
-    return Response(content=tsv_data, media_type="text/tsv", headers=headers)
 
 
 # ============================================================================
