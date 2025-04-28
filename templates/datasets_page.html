@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+<!-- Ellipsis -->
+<style>
+    .ellipsis {
+        max-width: 15px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+{% endblock %}
+
+{% block main %}
+<section class="section">
+    <h1>Datasets</h1>
+
+    <table id="datasets_table" class="table is-striped is-hoverable" style="width:100%;">
+        <thead>
+            <tr>
+                <th>view</th>
+                <th>dataset origin</th>
+                <th>dataset id</th>
+                <th>title</th>
+                <th>date created</th>
+                <th>date last modified</th>
+                <th># of files</th>
+                <th># of downloads</th>
+                <th># of views</th>
+                <th>description</th>
+            </tr>
+        </thead>
+    </table>
+    <!-- Dataset details when we click on a row from the dataset table -->
+    <div id="dataset_details">
+    </div>
+</section>
+{% endblock %}
+
+
+{% block script_extra %}
+<script type="text/javascript">
+    $('#datasets_table').DataTable({
+        ajax: '/datasets/datatables',
+        processing: true,
+        serverSide: true,
+        columns: [
+            { // view details
+                data: 'dataset_id',
+                render: function(data, type, row) {
+                    // data: the entire row data
+                    return '<button class="button is-small" hx-trigger="click" hx-get="/datasets/'+ data + '" hx-swap="innerHTML" hx-target="#dataset_details">🔍</button>';
+                }
+            },
+            { // origin
+                data: 'dataset_origin'
+            },
+            { // id in origin
+                data: 'dataset_id_in_origin',
+                render: function(data, type, row) {
+                    // data: dataset_id_in_origin
+                    // row: the entire row data, including dataset_url
+                    return '<a href="' + row.url + '" target="_blank">' + data + '</a>';
+                }
+            },
+            { // title
+                data: 'title',
+                render: $.fn.dataTable.render.ellipsis(30),
+            },
+            { // date created
+                 data: 'date_created'
+            },
+            { // date last modified
+                data: 'date_last_modified'
+            },
+            { // number of files
+                data: 'file_number'
+            },
+            { // number of downloads
+                data: 'download_number'
+            },
+            { // number of views
+                data: 'view_number'
+            },
+            { // description
+                data: 'description',
+                render: $.fn.dataTable.render.ellipsis(35),
+            },
+        ],
+        orderClasses: false,
+        autoWidth: false,
+        columnDefs: [
+            { width:  '5%', targets:  0, orderable: false },  // view button
+            { width:  '6%', targets:  1 },  // dataset origin
+            { width:  '6%', targets:  2 },  // dataset id in origin
+            { width: '38%', targets:  3 },  // title
+            { width: '10%', targets:  4 },  // date created
+            { width: '10%', targets:  5 },  // date last modified
+            { width:  '1%', targets:  6 },  // number of files
+            { width:  '1%', targets:  7 },  // number of downloads
+            { width:  '1%', targets:  8 },  // number of views
+            { width: '32%', targets:  9 },  // description
+        ],
+        // https://datatables.net/reference/option/drawCallback
+        "drawCallback": function(settings) {
+            htmx.process('#datasets_table');
+        },
+    });
+</script>
+{% endblock %}

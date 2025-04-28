@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block head_extra %}
-
 <!-- Bokeh CSS + JS -->
 <link rel="stylesheet" href="https://cdn.bokeh.org/bokeh/release/bokeh-2.4.3.min.css" type="text/css">
 <script type="text/javascript" src="https://cdn.bokeh.org/bokeh/release/bokeh-3.6.3.min.js"></script>
@@ -31,27 +30,12 @@
 
 {% block main %}
 <section class="section">
-    <div class="content">
-        <h1 class="title is-1 is-spaced">Welcome to the MDverse data explorer prototype 🔎</h1>
-    </div>
-    
-    <!-- <div class=""></div> -->
+    <h2 class="title is-1 is-spaced">Welcome to MDverse 🔎</h2>
     <div class="content" style="overflow-wrap: break-word;">
         <p>
-            Welcome to the MDverse data explorer prototype, a web-based application aimed at enhancing the accessibility and analysis of molecular dynamics (MD) simulation datasets sourced from multiple scientific repositories. This prototype presents preliminary summary statistics and visualizations—including dataset origins, keywords, and usage trends—to offer an overview and facilitate initial exploratory analysis.
-        </p>
-        <p>
-            <ul>
-                <li>Below is a summary table of the datasets available in the MDverse data explorer.</li>
-                <li>You can also find a word cloud that offers a visual representation of the most common words found in datset titles.</li>
-                <li>Lastly, you can toggle between two plots that show the number of files and datasets per year.</li>
-            </ul>       
-        </p>
-        <p>
-            This prototype is a work in progress, and additional features and improvements are planned for future iterations.
+            MDverse is a platform designed to facilitate the exploration and reuse of datasets related to molecular dynamics (MD) simulations.
         </p>
     </div>
-    
     <div class="fixed-grid has-5-cols">
         <div class="grid">
             <div class="cell is-col-span-3">
@@ -66,10 +50,9 @@
                             <th>Zip files</th>
                             <th>Files in zip files</th>
                             <th>Total files</th>
-                            <th><abbr title="Total size in GB for non-zip and zip files">Size in GB (Zip + Non-zip)</abbr></th>
+                            <th><abbr title="Total size in GB for non-zip and zip files">Size (GB)</abbr></th>
                         </tr>
                     </thead>
-
                     <tbody>
                     {% for row in results %}
                         <tr>
@@ -85,7 +68,6 @@
                         </tr>
                     {% endfor %}
                     </tbody>
-
                     <tfoot>
                         <tr>
                         <td><strong>Total</strong></td>
@@ -94,7 +76,6 @@
                         {% endfor %}
                         </tr>
                     </tfoot>
-                    
                 </table>
             </div>
 
@@ -123,7 +104,6 @@
                         {{ datasets_plot_div | safe }}
                     </div>
                 </div>
-                
             
                 <!-- Bokeh scripts (both plots' scripts) -->
                 {{ files_plot_script | safe }}
@@ -133,7 +113,6 @@
         </div>
     </div>
 </section>
-    
 {% endblock %}
 
 

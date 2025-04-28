@@ -35,7 +35,7 @@
                         {# Diplay button to access files for a given dataset #}
                         {# only from all datasets page #}
                         {% if request.headers["hx-target"] == "dataset_details" %}
-                        <a href="/dataset/{{ dataset.dataset_id }}/files" class="button is-info is-small">
+                        <a href="/datasets/{{ dataset.dataset_id }}/files" class="button is-info is-small">
                             See file list
                         </a>
                         {% endif %}
