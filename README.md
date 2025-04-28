@@ -21,9 +21,8 @@ uv sync
 ## Get data and models
 
 ```bash
-wget ...
-wget ...
-wget ...
+cp xxx/database.db ./database.db
+cp xxx/db_schema.py app/db_schema.py
 ```
 
 
